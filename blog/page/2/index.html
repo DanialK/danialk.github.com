@@ -1,0 +1,836 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Danial Khosravi's Blog</title>
+  <meta name="author" content="Danial Khosravi">
+
+  
+  <meta name="description" content="Express 4 was released a while ago and although the API is pretty much the same as version 3, there are some breaking changes which I recommend you &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DanialK.github.com/blog/page/2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Danial Khosravi's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+    window.onload = function () {
+        var containerId = "subtitle";
+        var subtitle = document.getElementById(containerId);
+        var texts = [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Statistics",
+            "Web Development",
+            "Functional Programming",
+            subtitle.innerHTML, // "Entrepreneur in the making...",
+        ];
+
+        function simulateType(textIndex) {
+            subtitle.innerHTML = "";
+            var text = texts[textIndex];
+
+            var time = 200;
+            for (var i = 0; i < text.length; i++) {
+                (function (char) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML + char;
+                    }, time + i * time);
+                })(text[i]);
+            }
+
+            setTimeout(function () {
+                var nextIndex = textIndex + 1;
+                simulateBackslash(nextIndex === texts.length ? 0 : nextIndex);
+            }, time * text.length + 1500);
+        }
+
+        function simulateBackslash(textIndex) {
+            var text = subtitle.innerHTML
+            var time = 50;
+
+            for (var i = text.length - 1; i >= 0; i--) {
+                (function (index) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML.substring(0, index);
+                    }, time + (text.length - i) * time);
+                })(i);
+            }
+
+            setTimeout(function () {
+                simulateType(textIndex);
+            }, 2000);
+        }
+        simulateBackslash(0);
+    }
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-26114012-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Danial Khosravi's Blog</a></h1>
+  
+    <h2 id='subtitle' style="height: 27px;"> Entrepreneur in the making... </h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DanialK.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/05/express-4-tutorial-simple-server/">Express 4 Tutorial - Simple Server</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-05T14:03:00+11:00" pubdate data-updated="true">Dec 5<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/12/05/express-4-tutorial-simple-server/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://expressjs.com/">Express 4</a> was released a while ago and although the API is pretty much the same as version 3, there are some breaking changes which I recommend you to take a look at this <a href="http://expressjs.com/guide/migrating-4.html">page</a> in case you want to move your express 3 application to express 4.</p>
+
+<p>Version 4 changed to Express core and middleware system. Which means the dependency on Connect framework which was built-in Express is removed and you must separately download and add the middleware you want to your application. Also the routing system has changed and the new router has much more flexibility.</p>
+
+<p>I&#8217;m planing to write a tutorial series on Express 4. In this tutorial we&#8217;re writing a very basic Express 4 app and connect it to a (dummy)Database and authenticate users.</p>
+
+<h3><a href="https://github.com/DanialK/express4-tutorial-simple-server">Source Code</a></h3>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/12/05/express-4-tutorial-simple-server/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action/">Arduino, ProcessingJS and SocketIO in Action</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-26T21:06:00+10:00" pubdate data-updated="true">Apr 26<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So today I wanted to do something relatively cool(!!) with things that I had around me. There are a lot of examples out there that sends input values from Arduino to Processing and then draw something cool. I wanted to do something a bit cooler and as always I wanted to bring Javascript into the action.
+In this tutorial i&#8217;m showing you how I connected my Arduino to a local NodeJS server and with the use of SocketIO send the value of potentiometer to client side and draw a cool graph with ProcessingJS !!!</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/12/arduino-and-nodejs-communication-with-serial-ports/">Arduino and NodeJS Communication With Serial Ports</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-12T17:19:00+10:00" pubdate data-updated="true">Apr 12<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/04/12/arduino-and-nodejs-communication-with-serial-ports/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hello everyone,
+2 days ago I recieved my arduino kit that I had ordered and i&#8217;m really excited to tell you that I&#8217;ll be posting more arduino tutorials from now on.</p>
+
+<p>One of the cool things that i discoved that i&#8217;m sharing with you here, is communication of Arduino and NodeJS using serial ports.
+Basically what we&#8217;re doing is sending some data(zeros and ones) from the arduino to the land of Javascript and NodeJS.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/04/12/arduino-and-nodejs-communication-with-serial-ports/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/01/09/cordova-slash-phonegap-tutorial/">Cordova/PhoneGap Tutorial</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-09T11:56:00+11:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/01/09/cordova-slash-phonegap-tutorial/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you are a web app developer and you care about mobile, you definitely heard of <a href="http://phonegap.com/">PhoneGap</a></p>
+
+<blockquote><p>PhoneGap is a free and open source framework that allows you to create mobile apps using standardized web APIs for the platforms you care about.</p></blockquote>
+
+<h4>Before we ger started let me clarify that <a href="http://phonegap.com/">PhoneGap</a> and <a href="http://cordova.apache.org/">Cordova</a> are same thing so don&#8217;t get confused !!!</h4>
+
+<p>I needed a small app to play with phonegap and last time I wrote the <a href="http://danialk.github.io/blog/2013/12/17/angularjs-note-application/">simple note application</a> in AngularJS immediately I start converting it to a phonegap application, which wasn&#8217;t that hard.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/01/09/cordova-slash-phonegap-tutorial/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/17/angularjs-note-application/">AngularJS Note Application</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-17T15:52:00+11:00" pubdate data-updated="true">Dec 17<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/12/17/angularjs-note-application/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>While ago after getting my head around angular, I wrote this application and I had some plans to make it even more interesting which because of exams period I didn&#8217;t get chance of implementing them. Now that I have some free time i&#8217;m trying to play a bit more with angular and maybe implement the things that I wanted to do for this little note application. But before doing so I want to share this application with our amazing community just to be an example for the people who are new to angular and this is my first angular application and I think I need your help to give me some feedback or send me pull request and tell me where I did something wrong or I could do better !!
+For storing the notes, I used <a href="http://pouchdb.com/">PouchDB</a> which is a really nice, easy to use and couchdb like database for inside of the browser. Also you can connect it to a couchdb client to sync the data with your online database if you wish !!
+Also I used <a href="http://maker.github.io/ratchet/">Ratchet</a> to make it a bit more ios like !!</p>
+
+<p>Thank you so much !!</p>
+
+<p>You can see the application <a href="http://angular-note-app.aws.af.cm/">Here</a></p>
+
+<p>And the source code on <a href="https://github.com/DanialK/angular-note-app">GitHub</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/28/advanced-security-in-backbone-application/">Advanced Security in Backbone Application</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-28T01:45:00+10:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/07/28/advanced-security-in-backbone-application/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Recently I was working on the security part of my application and I was experimenting lots of different ways for keeping the single page application secure and authorised. I saw an example of authentication in AngularJS which I found it really interesting and easy and as always(:D) started thinking how to do the same thing in my Backbone application. I tried to cover most of the advanced stuff that we need in most of web applications and usually in books and screencast about backbone there isn&#8217;t mush about it and it can be nightmare for beginners !!</p>
+
+<p>For the rest of this article i&#8217;m going to explain this sample application that I wrote which I tried to demonstrate route filtering, session management and securing requests using CSRF-Token in a Backbone Application.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/07/28/advanced-security-in-backbone-application/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/16/reactjs-and-socket-dot-io-chat-application/">ReactJS and Socket.IO Chat Application</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T19:52:00+10:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/16/reactjs-and-socket-dot-io-chat-application/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Updated(13/7/2015)</h2>
+
+<p>A week ago I was playing with AngularJS and <a href="https://github.com/btford/angular-socket-io-im">this</a> little chat application which uses socket.io and nodejs for realtime communication.
+Yesterday I saw a post about <a href="http://facebook.github.io/react">ReactJS</a> in EchoJS and started playing with this UI library. After playing a bit with React, I decided to write and chat application using React and I used <a href="https://github.com/btford/angular-socket-io-im">Bran Ford&#8217;s Backend</a> for server side of this little app.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/16/reactjs-and-socket-dot-io-chat-application/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/08/filtering-in-backbonejs-and-angularjs/">Filtering in BackboneJS and AngularJS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-08T20:41:00+10:00" pubdate data-updated="true">Jun 8<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/08/filtering-in-backbonejs-and-angularjs/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone !!!</p>
+
+<p>I&#8217;m working on a backbone project at the moment . I have an collection of data and i wanted to filter through them. Using a bit of backbone code I inject this function to my application. This wasn&#8217;t a pain at all. However after a bit of playing with AngularJS, I thought it would be cool to show you how filtering works both worlds!!</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/08/filtering-in-backbonejs-and-angularjs/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/08/backbone-tips-after-and-before-methods-for-router/">Backbone Tips: After and Before Methods for Router</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-08T01:04:00+10:00" pubdate data-updated="true">Jun 8<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/08/backbone-tips-after-and-before-methods-for-router/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everybody !!</p>
+
+<p>If you remember my last backbone tip, we added a method called <code>showView</code> and used it to render all of our views in each route !!</p>
+
+<p>Now we might want to do some operation before and after each route, so its nice to implement these two methods and by using a small hack make them called work !!</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">before</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'><span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">after</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">route</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isRegExp</span><span class="p">(</span><span class="nx">route</span><span class="p">))</span> <span class="nx">route</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_routeToRegExp</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">callback</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fragment</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">router</span><span class="p">.</span><span class="nx">_extractParameters</span><span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="nx">fragment</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">router</span><span class="p">.</span><span class="nx">before</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">router</span><span class="p">.</span><span class="nx">after</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">router</span><span class="p">.</span><span class="nx">trigger</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">router</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;route:&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">args</span><span class="p">));</span>
+</span><span class='line'>    <span class="nx">router</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;route&#39;</span><span class="p">,</span> <span class="nx">router</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So by this two line code , this.before would be execute before actual route callback and this.after after it !</p>
+
+<p>So the router would be like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Router</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s1">&#39;&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;INDEX ROUTE&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">before</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;before&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;after&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/07/backbone-tips-managing-views-and-memory-leaks/">Backbone Tips - Managing Views and Memory Leaks</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-07T20:13:00+10:00" pubdate data-updated="true">Apr 7<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/07/backbone-tips-managing-views-and-memory-leaks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone,</p>
+
+<p>As you may see in my previous post about backbone, I used a showView for rendering my views as well as keeping track of current view and closing it.
+One of the important things that you should consider in real world application is memory leaks. We always render the views and the next view comes and render it&#8217;s html on previous view and we think it&#8217;s gone. But it steel exist and it&#8217;s listening for it&#8217;s events and each new view that we render,takes our memory. So we need to somehow close our views before rendering the new one.</p>
+
+<p>What we are going to do it something like this :</p>
+
+<ol>
+<li>Adding close method to views prototype</li>
+<li>Adding onClose method to views that have child views for closing child views</li>
+<li>Adding showView to our router and using it</li>
+</ol>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/07/backbone-tips-managing-views-and-memory-leaks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2019/10/29/functional-programming-in-csharp/">Functional Programming in C#</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/">Shipping Deep Learning Models in Web and Mobile Applications</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/">Range of Convolutional Neural Networks on Fashion-MNIST dataset</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/27/deep-learning-pc-build/">Deep Learning PC Build</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/">Estimating Pi Using Monte Carlo Simulations</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/DanialK">@DanialK</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'DanialK',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("DaniaL_KH", 5, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/DaniaL_KH" class="twitter-follow-button" data-show-count="false">Follow @DaniaL_KH</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - Danial Khosravi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'danialk';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

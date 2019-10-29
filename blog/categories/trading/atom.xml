@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Trading | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/trading/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Calculating Stocks' Beta Using R]]></title>
+    <link href="http://DanialK.github.com/blog/2015/12/19/calculating-stocks-beta-using-r/"/>
+    <updated>2015-12-19T20:13:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2015/12/19/calculating-stocks-beta-using-r</id>
+    <content type="html"><![CDATA[<p>According to <a href="http://www.investopedia.com/terms/b/beta.asp">Investopedia</a>, Beta is a measure of the volatility, or systematic risk, of a security or a portfolio in comparison to the market as a whole. In this post, we're going to learn how to calculate beta coefficient of our desired stocks using historical price data that is publicly available.</p>
+
+<p>Below we will be covering</p>
+
+<ul>
+<li>R script to calculate beta for Goldman Sachs</li>
+<li>Maths behind the beta coefficient</li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>In this tutorial we are using S&amp;P500 as our market and we're calculating beta of Goldman Sachs in relation to S&amp;P500. It's essentially the correlation of price movements of stocks within the market/index, to individual stocks within the market/index.</p>
+
+<p>In order to calculate beta, we need to obtain historical data for both S&amp;P500 and Goldman Sachs. I'm using Yahoo Finance's public API in order to get historical quotes.</p>
+
+<p>Follow the code and make sure you read the comments !</p>
+
+<p>``` r script.R https://github.com/DanialK/multiple-line-graph-r/blob/master/</p>
+
+<h1>We're obtaining the weekly data</h1>
+
+<h1>More information about Yahoo Finance Historical Quotes API</h1>
+
+<h1>https://code.google.com/p/yahoo-finance-managed/wiki/csvHistQuotesDownload</h1>
+
+<p>indexUrl &lt;- 'http://ichart.yahoo.com/table.csv?s=%5EGSPC&amp;a=00&amp;b=3&amp;c=1950&amp;d=11&amp;e=19&amp;f=2015&amp;g=w'
+stockUrl &lt;- 'http://ichart.yahoo.com/table.csv?s=GS&amp;a=04&amp;b=4&amp;c=1999&amp;d=11&amp;e=19&amp;f=2015&amp;g=w'</p>
+
+<h1>stockUrl &lt;- 'http://ichart.yahoo.com/table.csv?s=MSFT&amp;a=02&amp;b=13&amp;c=1986&amp;d=11&amp;e=19&amp;f=2015&amp;g=w'</h1>
+
+<h1>read.csv fetches the csv data from an api endpoint if a valid url is provided</h1>
+
+<p>indexData &lt;- read.csv(indexUrl)
+stockData &lt;- read.csv(stockUrl)</p>
+
+<h1>Making sure R knows the Date column is Date</h1>
+
+<p>indexData$Date &lt;- as.Date(indexData$Date)
+stockData$Date &lt;- as.Date(stockData$Date)</p>
+
+<h1>Usually index contains more values</h1>
+
+<h1>Data received form yahoo endpoints are ordered from latest to oldest so</h1>
+
+<h1>we only subset the part of index data that contains stock information in it</h1>
+
+<p>indexData &lt;- indexData[1:length(stockData$Date), ]</p>
+
+<h1>Making sure dates are matching and then we grab the weekly close prices of both index and the stock</h1>
+
+<p>range &lt;- indexData$Date == stockData$Date
+indexPrices &lt;- indexData$Close[range]
+stockPrices &lt;- stockData$Close[range]</p>
+
+<h1>Calculating the weekly return, e.g (x2-x1)/x1</h1>
+
+<p>indexReturns &lt;- ( indexPrices[1:(length(indexPrices) - 1)] - indexPrices[2:length(indexPrices)] ) / indexPrices[2:length(indexPrices)]
+stockReturns &lt;- ( stockPrices[1:(length(stockPrices) - 1)] - stockPrices[2:length(stockPrices)] ) / stockPrices[2:length(stockPrices)]</p>
+
+<h1>using R's lm function, we run a  regression analysis</h1>
+
+<h1>we're using stockReturns as our y value</h1>
+
+<h1>and using indexReturns as our x value</h1>
+
+<h1>y ~ x is our formula</h1>
+
+<p>fit &lt;- lm(stockReturns ~ indexReturns)
+result &lt;- summary(fit)</p>
+
+<h1>summary gives us a lot of useful information, but we're mostly in beta value !!</h1>
+
+<p>beta &lt;- result$coefficients[2,1]
+print(beta)</p>
+
+<p>```</p>
+
+<p>Mathematically, beta is the covariance of stocks percentage daily/weekly change and index/markets daily/weekly change divided by the variance of market's percentage daily/weekly changes:</p>
+
+<p><code>Beta = Covariance(Stock's % Change, Index's % Change)/Variance(Index % Change)</code></p>
+
+<p>You can replace the <code>stockUrl</code> with some other company's data that is in S&amp;P500. Make sure you read the <a href="https://code.google.com/p/yahoo-finance-managed/wiki/csvHistQuotesDownload">Yahoo Finance API</a> before doing so.</p>
+
+<p>The main purpose of this tutorial is to see how regression can and <code>lm()</code> can be used in R, but it is also helpful to be able to calculate beta coefficient if you're running your own portfolio. The value obtained using this script (1.453472) at the time of writing was a little bit off from the values provided by <a href="https://www.google.com/finance?q=NYSE%3AGS&amp;ei=ihJ1VsmIH5eb0ATC84yIBA">Google Finance</a>(1.67) and <a href="https://au.finance.yahoo.com/q/ks?s=GS">Yahoo Finance</a>(1.38) which can be due to using different time spans for their beta calculations. But since those two numbers don't match, I'd say you should trust the value that you've calculated yourself !!</p>
+
+<p>If you made to here, I hope you found it useful !</p>
+
+<p>Please leave a comment if there are any questions, tips or other concerns.</p>
+]]></content>
+  </entry>
+  
+</feed>

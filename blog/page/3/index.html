@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Danial Khosravi's Blog</title>
+  <meta name="author" content="Danial Khosravi">
+
+  
+  <meta name="description" content="Hi everyone,
+It is about more than 1 month that I haven&#8217;t post anything cause I was working on a backbone project and during this time I&#8217; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DanialK.github.com/blog/page/3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Danial Khosravi's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+    window.onload = function () {
+        var containerId = "subtitle";
+        var subtitle = document.getElementById(containerId);
+        var texts = [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Statistics",
+            "Web Development",
+            "Functional Programming",
+            subtitle.innerHTML, // "Entrepreneur in the making...",
+        ];
+
+        function simulateType(textIndex) {
+            subtitle.innerHTML = "";
+            var text = texts[textIndex];
+
+            var time = 200;
+            for (var i = 0; i < text.length; i++) {
+                (function (char) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML + char;
+                    }, time + i * time);
+                })(text[i]);
+            }
+
+            setTimeout(function () {
+                var nextIndex = textIndex + 1;
+                simulateBackslash(nextIndex === texts.length ? 0 : nextIndex);
+            }, time * text.length + 1500);
+        }
+
+        function simulateBackslash(textIndex) {
+            var text = subtitle.innerHTML
+            var time = 50;
+
+            for (var i = text.length - 1; i >= 0; i--) {
+                (function (index) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML.substring(0, index);
+                    }, time + (text.length - i) * time);
+                })(i);
+            }
+
+            setTimeout(function () {
+                simulateType(textIndex);
+            }, 2000);
+        }
+        simulateBackslash(0);
+    }
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-26114012-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Danial Khosravi's Blog</a></h1>
+  
+    <h2 id='subtitle' style="height: 27px;"> Entrepreneur in the making... </h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DanialK.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews/">Backbone Tips: Rendering Views and Their ChildViews</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-07T18:39:00+10:00" pubdate data-updated="true">Apr 7<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone,
+It is about more than 1 month that I haven&#8217;t post anything cause I was working on a backbone project and during this time I&#8217;ve learned some new tricks which you need to know them if you really want to write a real application.</p>
+
+<h4>First important thing is managing your childViews in parentView.</h4>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/23/authentication-using-passportjs/">Authentication Using PassportJS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-23T01:35:00+11:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/23/authentication-using-passportjs/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As I promised before, today i&#8217;m going to talk about authentication with <a href="http://passportjs.org/">PassportJS</a>.
+Passport is one of the capable node modules which can be used for local authentication or even using it for integrating with Facebook or Twitter and …</p>
+
+<p>Basically in passport we set up some strategies and then pass the passport middleware into our application and then passport will take care of most of the things.</p>
+
+<p>Strategies can be local for your local authentication , or Facebook for authentication with Facebook .</p>
+
+<p>I&#8217;m going talk about Passport API a little bit and building a sample app which have local, Facebook and Twitter authentication. And also i&#8217;m going to use MongoDB as database of this application.</p>
+
+<h1>Application Overview :</h1>
+
+<ol>
+<li>Installing Passport and adding to app</li>
+<li>Adding passport middlewares</li>
+<li>Database and Models</li>
+<li>Setting the strategies</li>
+<li>Function Handlers</li>
+<li>Routes</li>
+</ol>
+
+
+<hr />
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/02/23/authentication-using-passportjs/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/20/simple-authentication-in-nodejs/">Simple Authentication in NodeJS</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-20T21:46:00+11:00" pubdate data-updated="true">Feb 20<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/20/simple-authentication-in-nodejs/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone !!</p>
+
+<p>Today i&#8217;m going to show you my simple authentication practice.
+There is lots of good authentication modules out there which can be used as middleware like <a href="http://passportjs.org/">PassportJS</a> and <a href="https://github.com/bnoguchi/everyauth">Everyauth</a> and they are also very useful for integration your web site with social networks like Facebook and Twitter.
+I will cover both the mentions tools in future posts but today we are going to build our authentication functionality on our own !!</p>
+
+<p>Before we start I should mention that like always I used MongoDB as a database for saving and loading our users. And I integrate it with our app using Mongoose module. So make sure you have them installed or if you using my source files first run <code>npm install</code> . Also make sure you are running mongo server by running <code>mongod</code> in new shell.</p>
+
+<h1>Application Parts</h1>
+
+<ul>
+<li>Module Dependencies</li>
+<li>Database and Models</li>
+<li>Middlewares and configurations</li>
+<li>Helper Functions</li>
+<li>Routes</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/02/20/simple-authentication-in-nodejs/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/10/building-a-contacts-manager-app-using-backbonejs-and-nodejs-and-mongodb/">Building a Contacts Manager App Using Backbonejs and Nodejs and MongoDB</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-10T08:54:00+11:00" pubdate data-updated="true">Feb 10<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/02/10/building-a-contacts-manager-app-using-backbonejs-and-nodejs-and-mongodb/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi guys ,
+now it&#8217;s a time to make our hands dirty with <a href="http://backbonejs.org/">Backbone</a> and <a href="http://nodejs.org/">Node.js</a> and of course <a href="http://expressjs.com/">Express</a> framework !!
+Today I want to show you how to make and contacts manager with Backbone. Also I use Node.js for backend and <a href="http://expressjs.com/">MongoDB</a> as a database of this project.</p>
+
+<p><strong><a href="https://github.com/DanialK/ContactsManager">Fork this project on Github</a></strong></p>
+
+<h1>Quick Look</h1>
+
+<ol>
+<li>Setting Up Database</li>
+<li>Setting Up Server</li>
+<li>Application</li>
+</ol>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/02/10/building-a-contacts-manager-app-using-backbonejs-and-nodejs-and-mongodb/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/23/simple-node-server/">Simple Node Server</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-23T19:55:00+11:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/23/simple-node-server/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hello</p>
+
+<p>In my first post on my brand new blog I want to talk about my new discoveries on <a href="http://nodejs.org/" title="NodeJs">NodeJS</a>. As you can see in NodeJs site :</p>
+
+<blockquote><p>Node.js is a platform built on Chrome&#8217;s JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.</p></blockquote>
+
+
+<p>Its a lot great features that all are 100% JavaScript . Definitely it&#8217;s a great choice for a beginner like me that only know a bit of JavaScrip. With Node you can run your server side JavaScript codes easily !!</p>
+
+<hr />
+
+<h1>What We Are Going To See?</h1>
+
+<p>I&#8217;m going to show you how to make a simple server. For now I just render two pages on this server, home and about. It&#8217;s all with pure NodeJS and I don&#8217;t use any framework. If you are familiar with amazing framework of NodeJS, Express you would say it could be much more easier with Express. I agree but I believe first we should learn how to deal with NodeJS and after that go for frameworks.</p>
+
+<p>By the way i&#8217;m going to cover Express in future posts in this blog !!</p>
+
+<hr />
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/01/23/simple-node-server/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2019/10/29/functional-programming-in-csharp/">Functional Programming in C#</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/">Shipping Deep Learning Models in Web and Mobile Applications</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/">Range of Convolutional Neural Networks on Fashion-MNIST dataset</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/27/deep-learning-pc-build/">Deep Learning PC Build</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/">Estimating Pi Using Monte Carlo Simulations</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/DanialK">@DanialK</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'DanialK',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("DaniaL_KH", 5, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/DaniaL_KH" class="twitter-follow-button" data-show-count="false">Follow @DaniaL_KH</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - Danial Khosravi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'danialk';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

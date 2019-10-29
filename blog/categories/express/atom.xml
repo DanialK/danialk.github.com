@@ -1,0 +1,1424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Express | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/express/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Express 4 Tutorial - Simple Server]]></title>
+    <link href="http://DanialK.github.com/blog/2014/12/05/express-4-tutorial-simple-server/"/>
+    <updated>2014-12-05T14:03:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2014/12/05/express-4-tutorial-simple-server</id>
+    <content type="html"><![CDATA[<p><a href="http://expressjs.com/">Express 4</a> was released a while ago and although the API is pretty much the same as version 3, there are some breaking changes which I recommend you to take a look at this <a href="http://expressjs.com/guide/migrating-4.html">page</a> in case you want to move your express 3 application to express 4.</p>
+
+<p>Version 4 changed to Express core and middleware system. Which means the dependency on Connect framework which was built-in Express is removed and you must separately download and add the middleware you want to your application. Also the routing system has changed and the new router has much more flexibility.</p>
+
+<p>I'm planing to write a tutorial series on Express 4. In this tutorial we're writing a very basic Express 4 app and connect it to a (dummy)Database and authenticate users.</p>
+
+<h3><a href="https://github.com/DanialK/express4-tutorial-simple-server">Source Code</a></h3>
+
+<!-- more -->
+
+
+<h3>Applicaiton Structure</h3>
+
+<pre><code>App
+
+- public -&gt; We put static files here
+
+- views -&gt; Our Jade template views are here
+
+- routes -&gt; Different routers of the application stay here
+</code></pre>
+
+<h3>App.js</h3>
+
+<p>If you are familiar with Express 3, this is code also looks familiar to you. The difference is that now we have to load <code>cookie-parser</code>, <code>body-parser</code> and <code>express-session</code> and load them into our applicaiton as a middleware by <code>app.use()</code>.</p>
+
+<p>``` js App.js https://github.com/DanialK/express4-tutorial-simple-server/blob/
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session')</p>
+
+<p>// loading routes
+var index = require('./routes/index');
+var login = require('./routes/login');
+var signup = require('./routes/signup');
+var user = require('./routes/user');</p>
+
+<p>var app = express();</p>
+
+<p>// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');</p>
+
+<p>app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({</p>
+
+<pre><code>secret : "SHUUUUSH",
+saveUninitialized: true,
+resave : false 
+</code></pre>
+
+<p>}))</p>
+
+<p>// attaching routes to the application
+app.use(index);
+app.use(login);
+app.use(signup);
+app.use(user);</p>
+
+<p>// catch 404 and forward to error handler
+app.use(function(req, res, next) {</p>
+
+<pre><code>var err = new Error('Not Found');
+err.status = 404;
+next(err);
+</code></pre>
+
+<p>});</p>
+
+<p>// error handlers</p>
+
+<p>// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {</p>
+
+<pre><code>app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: err
+    });
+});
+</code></pre>
+
+<p>}</p>
+
+<p>// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {</p>
+
+<pre><code>res.status(err.status || 500);
+res.render('error', {
+    message: err.message,
+    error: {}
+});
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = app;</p>
+
+<p>```</p>
+
+<h2>Routers</h2>
+
+<p>Each route file in routes folder exports a router which takes routes for a specific part of the application and like middlewares we load them into the applicaiton by <code>app.use()</code></p>
+
+<p>``` js index.js https://github.com/DanialK/express4-tutorial-simple-server/blob/master/routes/index.js</p>
+
+<p>var express = require('express');
+var router = express.Router();</p>
+
+<p>router.get('/', function(req, res) {</p>
+
+<pre><code>var user = req.session.user; 
+res.render('index', { title: 'Express 4 Tutorial', user : user? user: null });
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = router;</p>
+
+<p>```</p>
+
+<h2>Source code</h2>
+
+<p>This simple app, sign you up as a user and saves in session. You can access your profile and other users profile by going to <code>localhost:3000/user/:id</code> which you have to put a valid user id, otherwise you receive 404. This simple app also restricts you to access users' profile if you're not logged in and restricts your access to pages such as login and sign up after you are signed in.</p>
+
+<p>You can find the code <a href="https://github.com/DanialK/express4-tutorial-simple-server">HERE</a></p>
+
+<p>To run the application install the dependencies <code>npm install</code> and then <code>npm start</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Arduino, ProcessingJS and SocketIO In Action]]></title>
+    <link href="http://DanialK.github.com/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action/"/>
+    <updated>2014-04-26T21:06:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action</id>
+    <content type="html"><![CDATA[<p>So today I wanted to do something relatively cool(!!) with things that I had around me. There are a lot of examples out there that sends input values from Arduino to Processing and then draw something cool. I wanted to do something a bit cooler and as always I wanted to bring Javascript into the action.
+In this tutorial i'm showing you how I connected my Arduino to a local NodeJS server and with the use of SocketIO send the value of potentiometer to client side and draw a cool graph with ProcessingJS !!!</p>
+
+<!-- more -->
+
+
+<h3>Arduino</h3>
+
+<p>We begin with setting up the Arduino board and program it to write the value of potentiometer into serial port.</p>
+
+<p>I used following schematic to set wire up my board to potentiometer:</p>
+
+<p><img src="/images/arduino-processingjs-socketio.png"></p>
+
+<p>Now using the following code, we read the value of potentiometer
+``` js
+void setup() {
+  // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+}</p>
+
+<p>void loop() {
+  // read the input on analog pin 0:
+  int sensorValue = analogRead(A0);
+  // map the value between 0 to 90 :
+  float val = map(sensorValue,0,1023,0,90);
+  // print out the value :
+  Serial.println(val);
+}
+```</p>
+
+<p>Note that I mapped our analog value of potentiometer, which is between 0 to 1023, to a number between 0 to 90. It's because we need our value to be in that range so our processing example would draw correctly.</p>
+
+<h3>Server</h3>
+
+<p>Our server needs to have access to the same serial port that the Arduino is connected to read the value and send it to the client using SocketIO.
+This node server also uses ExpressJS to serve the static files.
+My Arduino is connected to <code>/dev/tty.usbmodem1421</code> . In Arduino app if you go to tools/serial port the one that has check next to it is the port that your Arduino board is connected. Windows users your port would start with <code>COM</code>.</p>
+
+<p>``` js
+var http = require('http');
+var express = require('express');
+var app = express();
+var SerialPort = require("serialport").SerialPort;
+var server = http.createServer(app).listen(3000);
+var io = require('socket.io').listen(server);</p>
+
+<p>app.use(express.static(__dirname + '/public'));</p>
+
+<p>var serialport = new SerialPort("/dev/tty.usbmodem1421"); // replace this address with your port address
+serialport.on('open', function(){</p>
+
+<pre><code>// Now server is connected to Arduino
+console.log('Serial Port Opend');
+
+var lastValue;
+io.sockets.on('connection', function (socket) {
+    //Connecting to client 
+    console.log('Socket connected');
+    socket.emit('connected');
+    var lastValue;
+
+    serialport.on('data', function(data){
+        var angle = data[0];
+        if(lastValue !== angle){
+            socket.emit('data', angle);
+        }
+        lastValue = angle;
+    });
+});
+</code></pre>
+
+<p>});</p>
+
+<p>```
+Keep that in mind that Arduino constantly reads the value of potentiometer and writes it into the serial. If we emit every single value that comes into the serial port app would be slow. That's why we keep the value from serial port in lastValue and check it each time and if it changed we're going to emit the value to the client.</p>
+
+<h3>Client Side</h3>
+
+<p>In our browser <code>script.js</code>, we're listening for data event on socket and we're going to show the value on the screen as well as assigning it to our angle variable.</p>
+
+<p>``` js</p>
+
+<p>var dialogue = document.getElementById('dialogue');
+var box = document.getElementById('angle');
+socket.on('connected', function(){</p>
+
+<pre><code>dialogue.innerHTML = "Socket Connected";
+</code></pre>
+
+<p>});
+socket.on('disconnect', function(){</p>
+
+<pre><code>dialogue.innerHTML = "Socket Disconnected";
+</code></pre>
+
+<p>});
+socket.on('data', function (data) {</p>
+
+<pre><code>box.innerHTML = data;
+angle = data;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>pretty easy right?</p>
+
+<h3>ProcessingJS</h3>
+
+<p>I'm not an expert in Processing but good news is i've started learning more about Processing language and trying to make some cool stuff with it. So I found this example in ProcessingJS website which I thinks it's perfect for this little project(it exactly gives you that feeling that something is changing as you play with the potentiometer).</p>
+
+<p><a href="http://processingjs.org/learning/topic/tree/">Link to the example on ProcessingJS website</a></p>
+
+<p>After including the ProcessingJS to our HTML page, like below we load our tree.pde, which is a processing file into our app and ProcessingJS will compile and draw it for us into our canvas. You just have to give the path of the file in your filesystem relative to the index.html file.
+<code>js
+&lt;canvas id="tree" data-processing-sources="tree.pde"&gt;&lt;/canvas&gt;
+</code></p>
+
+<p>The only difference of this tree.pde and actual code on the ProcessingJS website is that in the actual code, they generate the angle from position of you mouse on the canvas. However in our example we get the angle from our Arduino. The cool thing about ProcessingJS is that because it compiles processing code into Javascript, then you are allowed to write Javascript inside your processing code and you have access to all the Javascript functions and variables. That's why we can directly replace the <code>float a = (mouseX / (float) width) * 90f;</code> in the actual code with <code>float a = angle;</code> which angle is a global variable and it's value changes everytime our client code receives new value form server.</p>
+
+<h3>Result</h3>
+
+<p>Here is a gif of the result. As you can see I have tree windows open and they are all sync together because of the realtime communication of client and server using SocketIO.</p>
+
+<p><img class="thumb" src="/images/arduino-processingjs-socketio-gif-thumb.png"></p>
+
+<h4>The source code of this project is available <a href="https://github.com/DanialK/arduino-processingjs-socketio">HERE</a> on github.</h4>
+
+<p>Make sure to run <code>npm install &amp;&amp; bower install</code> to install all the dependencies.
+Connect your Arduino board to the same port that you set in your app.js and then run <code>npm start</code> and head over to <code>localhost:3000</code> to see the magic !!!</p>
+
+<p>Hope you guys enjoyed it !!
+If you had any question use comments below or send me your questions at dani_khosravi@yahoo.com. Also follow me on <a href="https://twitter.com/DaniaL_KH">twitter</a> if your interested in Arduino, Javascript and these sort of goodies :D</p>
+
+<p><script type="text/javascript">
+	$(document).ready(function(){
+		var thumb = $('.thumb');
+		var thumbSrc = thumb.attr('src');
+		var gifSrc = thumbSrc.slice(0, thumbSrc.indexOf('-gif-thumb')) + '.gif';
+		thumb.one('click', function() {
+			$(this).attr('src', gifSrc);
+		});
+	});
+</script></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Advanced Security In Backbone Application]]></title>
+    <link href="http://DanialK.github.com/blog/2013/07/28/advanced-security-in-backbone-application/"/>
+    <updated>2013-07-28T01:45:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/07/28/advanced-security-in-backbone-application</id>
+    <content type="html"><![CDATA[<p>Recently I was working on the security part of my application and I was experimenting lots of different ways for keeping the single page application secure and authorised. I saw an example of authentication in AngularJS which I found it really interesting and easy and as always(:D) started thinking how to do the same thing in my Backbone application. I tried to cover most of the advanced stuff that we need in most of web applications and usually in books and screencast about backbone there isn't mush about it and it can be nightmare for beginners !!</p>
+
+<p>For the rest of this article i'm going to explain this sample application that I wrote which I tried to demonstrate route filtering, session management and securing requests using CSRF-Token in a Backbone Application.</p>
+
+<!-- more -->
+
+
+<h3>Source Code</h3>
+
+<p>Firstly I want you to download the source code and take a look at it.
+<a href="https://github.com/DanialK/advanced-security-in-backbone">GitHub</a>
+In the rest of the article I just talk about important parts of application and highly recommend it to take a look at the source code.</p>
+
+<h1>Server</h1>
+
+<p>I'm using express as server side framework of this sample application. Using the csrf() middleware we are adding CSRF token to all of our request and if we don't get CSRF back from the client it send an error(403) to client.
+Then using jade, assign this initial CSRF token to csrf global variable in our main rendered html file that we are going to send to client.
+Also when user logout, we clear the session and set new CSRF token into server's session and then send it to client.</p>
+
+<p>```js</p>
+
+<p>/<em>*
+ * Module dependencies.
+ </em>/</p>
+
+<p>var express = require('express')
+  , http = require('http')
+  , path = require('path')
+  , uid = require('uid2');</p>
+
+<p>var app = express();</p>
+
+<p>// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', <em><em>dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.cookieParser('NOTHING'));
+app.use(express.session());
+// This middleware adds </em>csrf to
+// our session
+// req.session.</em>csrf
+app.use(express.csrf());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(function(req, res, next){</p>
+
+<pre><code>res.setHeader('X-CSRF-Token', req.session._csrf);
+next();
+</code></pre>
+
+<p>});
+app.use(express.static(path.join(__dirname, 'public')));
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Application Routes
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>app.get("/", function(req, res){</p>
+
+<pre><code>//send and csrf token with frist request
+//and assign it to a global csrf variable
+//inside the template
+res.render('index', {
+    csrf : req.session._csrf
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get("/session", function(req, res){</p>
+
+<pre><code>//Check for authentication
+if(req.session.user){
+    res.send(200, {
+        auth : true,
+        user : req.session.user
+    });
+}else{
+    res.send(401, {
+        auth : false,
+        csrf : req.session._csrf
+    });
+}
+</code></pre>
+
+<p>});</p>
+
+<p>app.post("/session/login", function(req, res){</p>
+
+<pre><code>var email = req.body.email;
+var password = req.body.password;
+for (var i = 0; i &lt; Users.length; i++) {
+    var user = Users[i];
+    if(user.email == email &amp;&amp; user.password == password){
+        req.session.user = user;
+        return res.send(200, {
+            auth : true,
+            user : user
+        });
+    }
+};
+return res.send(401);
+</code></pre>
+
+<p>});</p>
+
+<p>app.del("/session/logout", function(req, res){</p>
+
+<pre><code>//Sending new csrf to client when user logged out
+//for next user to sign in without refreshing the page
+req.session.user = null;
+req.session._csrf = uid(24);
+
+res.send(200, {
+    csrf : req.session._csrf
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get('/users/:id', Auth, function(req, res){</p>
+
+<pre><code>//Using the Auth filter for this route
+//to check for authentication before sending data
+var id = req.params.id;
+
+for (var i = 0; i &lt; Users.length; i++) {
+    if(id == Users[i].id){
+        return res.send(Users[i]);
+    }
+};
+return res.send(400);
+</code></pre>
+
+<p>});</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Route Filters
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>//Authentication Filter
+function Auth (req, res, next) {</p>
+
+<pre><code>if(req.session.user){
+    next();
+}else{
+    res.send(401,{
+        flash : 'Plase log in first'
+    });
+}
+</code></pre>
+
+<p>}</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Dummy Database
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>var Users = [</p>
+
+<pre><code>{
+    firstName : 'Danial',
+    lastName : 'Khosravi',
+    password : 'pass',
+    email : 'backbone@authentication.com',
+    id : 1
+},
+{
+    firstName : 'John',
+    lastName : 'Doe',
+    password : 'jd',
+    email : 'john@doe.com',
+    id : 2
+}
+</code></pre>
+
+<p>];</p>
+
+<p>http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});</p>
+
+<p>```</p>
+
+<h1>Backbone App</h1>
+
+<p>Application checks for authentication first it initialises and assign the result into the session model. Each api request check for the user authentication as well and sends an error if user is not authenticated. Clearing the session and sending user to login is the result of api 401 errors. This way session model is always sync with server.</p>
+
+<h2>Session</h2>
+
+<p>In session model we keep all of our session data and login and logout functionality. Also I rewrite get, set and unset methods to use HTML5 sessionStorage if browser support it and if not, use the backbone model. The cool thing about sessionStorage is that it keep the session for you and if the session destroys, all data in it reset unlike localStorage that keep the data for you unless you delete them yourself.
+csrf variable is set using the jade template when application first send to client.
+Using the $.ajaxSetup we set this token to all of our future request headers.
+When user logout, server send a new CSRF token and assign it to global CSRF variable and run initialize again, so the new user don't need to refresh the page for login.
+And at the end we return an instance of model so we can require our session model in our router, views or anywhere we need it !!</p>
+
+<p>```js</p>
+
+<p>define([</p>
+
+<pre><code>'jquery',
+'backbone',
+'router'
+</code></pre>
+
+<p>], function($, Backbone, Router){</p>
+
+<pre><code>var SessionModel = Backbone.Model.extend({
+
+    url : '/session',
+
+    initialize : function(){
+        //Ajax Request Configuration
+        //To Set The CSRF Token To Request Header
+        $.ajaxSetup({
+            headers : {
+                'X-CSRF-Token' : csrf
+            }
+        });
+
+        //Check for sessionStorage support
+        if(Storage &amp;&amp; sessionStorage){
+            this.supportStorage = true;
+        }
+    },
+
+    get : function(key){
+        if(this.supportStorage){
+            var data = sessionStorage.getItem(key);
+            if(data &amp;&amp; data[0] === '{'){
+                return JSON.parse(data);
+            }else{
+                return data;
+            }
+        }else{
+            return Backbone.Model.prototype.get.call(this, key);
+        }
+    },
+
+
+    set : function(key, value){
+        if(this.supportStorage){
+            sessionStorage.setItem(key, value);
+        }else{
+            Backbone.Model.prototype.set.call(this, key, value);
+        }
+        return this;
+    },
+
+    unset : function(key){
+        if(this.supportStorage){
+            sessionStorage.removeItem(key);
+        }else{
+            Backbone.Model.prototype.unset.call(this, key);
+        }
+        return this;    
+    },
+
+    clear : function(){
+        if(this.supportStorage){
+            sessionStorage.clear();  
+        }else{
+            Backbone.Model.prototype.clear(this);
+        }
+    },
+
+    login : function(credentials){
+        var that = this;
+        var login = $.ajax({
+            url : this.url + '/login',
+            data : credentials,
+            type : 'POST'
+        });
+        login.done(function(response){
+            that.set('authenticated', true);
+            that.set('user', JSON.stringify(response.user));
+            if(that.get('redirectFrom')){
+                var path = that.get('redirectFrom');
+                that.unset('redirectFrom');
+                Backbone.history.navigate(path, { trigger : true });
+            }else{
+                Backbone.history.navigate('', { trigger : true });
+            }
+        });
+        login.fail(function(){
+            Backbone.history.navigate('login', { trigger : true });
+        });
+    },
+
+    logout : function(callback){
+        var that = this;
+        $.ajax({
+            url : this.url + '/logout',
+            type : 'DELETE'
+        }).done(function(response){
+            //Clear all session data
+            that.clear();
+            //Set the new csrf token to csrf vaiable and
+            //call initialize to update the $.ajaxSetup 
+            // with new csrf
+            csrf = response.csrf;
+            that.initialize();
+            callback();
+        });
+    },
+
+
+    getAuth : function(callback){
+        var that = this;
+        var Session = this.fetch();
+
+        Session.done(function(response){
+            that.set('authenticated', true);
+            that.set('user', JSON.stringify(response.user));
+        });
+
+        Session.fail(function(response){
+            response = JSON.parse(response.responseText);
+            that.clear();
+            csrf = response.csrf !== csrf ? response.csrf : csrf;
+            that.initialize();
+        });
+
+        Session.always(callback);
+    }
+});
+
+return new SessionModel();  
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h2>BaseRouter</h2>
+
+<p>Before writing the application router, we take a look at BaseRouter. BaseRouter has before and after methods and I rewrite the route method to call before and after methods before and after changing the route!
+Before has a next function as it's second argument, so when we want our application let the route handler to get executed, like node.js middlewares, we execute <code>next()</code>.</p>
+
+<p>``` js</p>
+
+<p>define([</p>
+
+<pre><code>'underscore',
+'backbone'
+</code></pre>
+
+<p>], function(_, Backbone){</p>
+
+<pre><code>var BaseRouter = Backbone.Router.extend({
+    before: function(){},
+    after: function(){},
+    route : function(route, name, callback){
+        if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+        if (_.isFunction(name)) {
+            callback = name;
+            name = '';
+        }
+        if (!callback) callback = this[name];
+
+        var router = this;
+
+        Backbone.history.route(route, function(fragment) {
+            var args = router._extractParameters(route, fragment);
+
+            var next = function(){
+                callback &amp;&amp; callback.apply(router, args);
+                router.trigger.apply(router, ['route:' + name].concat(args));
+                router.trigger('route', name, args);
+                Backbone.history.trigger('route', router, name, args);
+                router.after.apply(router, args);       
+            }
+            router.before.apply(router, [args, next]);
+        });
+        return this;
+    }
+});
+
+return BaseRouter;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h2>Router</h2>
+
+<p>Read the comments !!</p>
+
+<p>``` js</p>
+
+<p>define([</p>
+
+<pre><code>'jquery',
+'underscore',
+'backbone',
+'core/BaseRouter',
+'views/HomeView',
+'views/LoginView',
+'views/ProfileView',
+'models/UserModel',
+'Session'
+</code></pre>
+
+<p>], function($, _,  Backbone, BaseRouter, HomeView, LoginView, ProfileView, UserModel, Session){</p>
+
+<pre><code>var Router = BaseRouter.extend({
+
+    routes : {
+        'login' : 'showLogin',
+        'profile' : 'showProfile',
+        '*default' : 'showHome'
+    },
+
+    // Routes that need authentication and if user is not authenticated
+    // gets redirect to login page
+    requresAuth : ['#profile'],
+
+    // Routes that should not be accessible if user is authenticated
+    // for example, login, register, forgetpasword ...
+    preventAccessWhenAuth : ['#login'],
+
+    before : function(params, next){
+        //Checking if user is authenticated or not
+        //then check the path if the path requires authentication 
+        var isAuth = Session.get('authenticated');
+        var path = Backbone.history.location.hash;
+        var needAuth = _.contains(this.requresAuth, path);
+        var cancleAccess = _.contains(this.preventAccessWhenAuth, path);
+
+        if(needAuth &amp;&amp; !isAuth){
+            //If user gets redirect to login because wanted to access
+            // to a route that requires login, save the path in session
+            // to redirect the user back to path after successful login
+            Session.set('redirectFrom', path);
+            Backbone.history.navigate('login', { trigger : true });
+        }else if(isAuth &amp;&amp; cancleAccess){
+            //User is authenticated and tries to go to login, register ...
+            // so redirect the user to home page
+            Backbone.history.navigate('', { trigger : true });
+        }else{
+            //No problem, handle the route!!
+            return next();
+        }           
+    },
+
+    after : function(){
+        //empty
+    },
+
+    changeView : function(view){
+        //Close is a method in BaseView
+        //that check for childViews and 
+        //close them before closing the 
+        //parentView
+        function setView(view){
+            if(this.currentView){
+                this.currentView.close();
+            }
+            this.currentView = view;
+            $('.container').html(view.render().$el);
+        }
+
+        setView(view);
+    },
+
+    fetchError : function(error){
+        //If during fetching data from server, session expired
+        // and server send 401, call getAuth to get the new CSRF
+        // and reset the session settings and then redirect the user
+        // to login
+        if(error.status === 401){
+            Session.getAuth(function(){
+                Backbone.history.navigate('login', { trigger : true });
+            });
+        }
+    },
+
+    //... Route handlers …
+});
+
+return Router;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>For a bit more specific route filtering we could use <a href="https://github.com/boazsender/backbone.routefilter">backbone.routefilter</a> as well !</p>
+
+<hr />
+
+<h1>Conclusion</h1>
+
+<p>Basiclly single page web applications security management is a bit different from server side traditional websites.
+In a typical application you can have these sitouations:</p>
+
+<ul>
+<li>Not authenticated and server the not restricted pages</li>
+<li>Not Authenticated and try accesing restricted page wich redirect you to login page</li>
+<li>Authenticated and don't have access to some pages like login, register, forgotpassowrd</li>
+<li>Authenticated !!!</li>
+<li>And leave application for a while and session expires which in a first api call to server, client get notified user is not in session anymore and redirect the user to login page</li>
+</ul>
+
+
+<p>I tried to add important futures that in a real application we might need them, into this sample application. Also I highly recommend that in production serve your application on HTTPS protocol !!</p>
+
+<p>You can get the source code from <a href="https://github.com/DanialK/advanced-security-in-backbone">GitHub</a>.</p>
+
+<p>I would love to hear from you and your suggestions, feel free to leave comment.</p>
+
+<p>If you enjoyed please share and fallow me on <a href="https://twitter.com/DaniaL_KH">twitter</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Authentication Using PassportJS]]></title>
+    <link href="http://DanialK.github.com/blog/2013/02/23/authentication-using-passportjs/"/>
+    <updated>2013-02-23T01:35:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2013/02/23/authentication-using-passportjs</id>
+    <content type="html"><![CDATA[<p>As I promised before, today i'm going to talk about authentication with <a href="http://passportjs.org/">PassportJS</a>.
+Passport is one of the capable node modules which can be used for local authentication or even using it for integrating with Facebook or Twitter and …</p>
+
+<p>Basically in passport we set up some strategies and then pass the passport middleware into our application and then passport will take care of most of the things.</p>
+
+<p>Strategies can be local for your local authentication , or Facebook for authentication with Facebook .</p>
+
+<p>I'm going talk about Passport API a little bit and building a sample app which have local, Facebook and Twitter authentication. And also i'm going to use MongoDB as database of this application.</p>
+
+<h1>Application Overview :</h1>
+
+<ol>
+<li>Installing Passport and adding to app</li>
+<li>Adding passport middlewares</li>
+<li>Database and Models</li>
+<li>Setting the strategies</li>
+<li>Function Handlers</li>
+<li>Routes</li>
+</ol>
+
+
+<hr />
+
+<!-- more -->
+
+
+<h3>Firstly, what is the pass.js?</h3>
+
+<p>As you may noticed in my source file folder i'm using a pass.js as a module in my app. I could have just save username and password of each user in my database for authentication but to make our simple app look a little bit serious I used this file which I copied form TJ examples. basically what it does is for making new user if you pass user password to it using  <code>crypto</code>, Node's built-in module, it encrypt our user's password and save it to db. And if we trying to sing in the function take the entered password and encrypt it and check it with a encrypted password which is saved in database and if they are same, it would log the user into the site.
+We could have don't use it but it's not a bad idea to use it !!</p>
+
+<hr />
+
+<h1>Lets Get Started</h1>
+
+<h3>Installing Passport:</h3>
+
+<p>Firstly you should install the PassportJS using NPM and require it in to your application.</p>
+
+<pre><code>$ npm install passport
+</code></pre>
+
+<p>Because we are going to define Facebook and Twitter strategies, lets install their plugins as well as local plugin for local authentication :</p>
+
+<pre><code>$ npm install passport-local
+$ npm install passport-facebook
+</code></pre>
+
+<p>And require them :</p>
+
+<p>``` js
+passport = require("passport");
+LocalStrategy = require('passport-local').Strategy;
+FacebookStrategy = require('passport-facebook').Strategy;</p>
+
+<p>```</p>
+
+<h3>Middlewares:</h3>
+
+<p>Then make sure you have this middleware in use :</p>
+
+<p>``` js</p>
+
+<p>app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(express.session({ secret: 'SECRET' }));
+app.use(passport.initialize());
+app.use(passport.session());</p>
+
+<p>```</p>
+
+<h3>Database and Models:</h3>
+
+<p>I'm using mongoose to use my MongoDB server in application.</p>
+
+<ol>
+<li>Run mongo server by <code>mongod</code></li>
+<li>Connect to server in application<code>mongoose.connect("mongodb://localhost/myapp");</code></li>
+<li>Our local user schema and it's model to store information of our local users.
+``` js</li>
+</ol>
+
+
+<p>var LocalUserSchema = new mongoose.Schema({</p>
+
+<pre><code>username: String,
+salt: String,
+hash: String
+</code></pre>
+
+<p>});</p>
+
+<p>var Users = mongoose.model('userauths', localUserSchema);</p>
+
+<p>```
+4. Our Facebook users schema and model to store information of the users that logged in with Facebook</p>
+
+<p>``` js
+var FacebookUserSchema = new mongoose.Schema({</p>
+
+<pre><code>fbId: String,
+email: { type : String , lowercase : true},
+name : String
+</code></pre>
+
+<p>});
+var FbUsers = mongoose.model('fbs',FacebookUserSchema);</p>
+
+<p>```</p>
+
+<h3>Strategies:</h3>
+
+<p>To use passport as our middleware first we should set the strategies to be initialised using passport initialise middleware.</p>
+
+<h4>Local Strategy</h4>
+
+<p>``` js</p>
+
+<p>passport.use(new LocalStrategy(function(username, password,done){</p>
+
+<pre><code>Users.findOne({ username : username},function(err,user){
+    if(err) { return done(err); }
+    if(!user){
+        return done(null, false, { message: 'Incorrect username.' });
+    }
+
+    hash( password, user.salt, function (err, hash) {
+        if (err) { return done(err); }
+        if (hash == user.hash) return done(null, user);
+        done(null, false, { message: 'Incorrect password.' });
+    });
+});
+</code></pre>
+
+<p>}));</p>
+
+<p>```</p>
+
+<h4>Facebook Strategy</h4>
+
+<p>Firstly you should go to <a href="https://developers.facebook.com/">Facebook Developer</a> and make a new application to get clientID and clientSecret. It should be noted that because we are running this app locally so set the app URL to <code>http://localhost:3000</code> . Also in callbackURL we passed the "/auth/facebook/callback" route at the end of the address because the authentication data would send to this route to be connected to Facebook and be integrated.</p>
+
+<p>``` js
+passport.use(new FacebookStrategy({</p>
+
+<pre><code>clientID: "YOUR ID",
+clientSecret: "YOUR CODE",
+callbackURL: "http://localhost:3000/auth/facebook/callback"
+</code></pre>
+
+<p>  },
+  function(accessToken, refreshToken, profile, done) {</p>
+
+<pre><code>FbUsers.findOne({fbId : profile.id}, function(err, oldUser){
+    if(oldUser){
+        done(null,oldUser);
+    }else{
+        var newUser = new FbUsers({
+            fbId : profile.id ,
+            email : profile.emails[0].value,
+            name : profile.displayName
+        }).save(function(err,newUser){
+            if(err) throw err;
+            done(null, newUser);
+        });
+    }
+}); 
+</code></pre>
+
+<p>  }
+));</p>
+
+<p>```</p>
+
+<p>The other important part of configuring passport is serializeUser and deserializeUser which basically set the user to req.user and establish a session via a cookie set in the user's browser.
+``` js</p>
+
+<p>passport.serializeUser(function(user, done) {</p>
+
+<pre><code>done(null, user.id);
+</code></pre>
+
+<p>});</p>
+
+<p>passport.deserializeUser(function(id, done) {</p>
+
+<pre><code>FbUsers.findById(id,function(err,user){
+    if(err) done(err);
+    if(user){
+        done(null,user);
+    }else{
+        Users.findById(id, function(err,user){
+            if(err) done(err);
+            done(null,user);
+        });
+    }
+});
+</code></pre>
+
+<p>});</p>
+
+<p>```
+In deserializeUser we typically find a user in database based on the given id and pass the result to done(). As you may noticed for some reason I separate the local users and Facebook users in different documents(collections) that's why I did so in deserializeUser but I believe there should be a better practice for searching a data in tow different collection that what i've done but I couldn't find such a query in mongoose api !</p>
+
+<h3>Function Handlers</h3>
+
+<p>Like my previous example on authentication ( the simple one) here we have 2 helper function.One for check if user logged in and can access to all the parts of the site and we can use it as a middleware of the routes that need authentication,and the other one which we just use it as a middleware of post request on "/signup" route to make sure the username had not already taken .</p>
+
+<p>The main different of this authenticatedOrNot function with the one in previous tutorial is that passport provide a isAuthenticated() method which we can use it intend if req.session.user which we used in previous tutorial.</p>
+
+<p>``` js</p>
+
+<p>function authenticatedOrNot(req, res, next){</p>
+
+<pre><code>if(req.isAuthenticated()){
+    next();
+}else{
+    res.redirect("/login");
+}
+</code></pre>
+
+<p>}</p>
+
+<p>function userExist(req, res, next) {</p>
+
+<pre><code>Users.count({
+    username: req.body.username
+}, function (err, count) {
+    if (count === 0) {
+        next();
+    } else {
+        // req.session.error = "User Exist"
+        res.redirect("/singup");
+    }
+});
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<h3>Routes:</h3>
+
+<p>The routes are quit easy to understand if you check at the source code, but there is some passport methods that i'm going to explain</p>
+
+<p>First, in our post request to "/signup" request after saving a new user to database, I used passport built in login method which automatically log the new user in after signing up and redirect him/her to "/".</p>
+
+<p>Second, every time you use Facebook strategy you should prepare two routes for the authentication with Facebook (or even twitter and …).</p>
+
+<p>``` js</p>
+
+<p>app.get("/auth/facebook", passport.authenticate("facebook",{ scope : "email"}));</p>
+
+<p>app.get("/auth/facebook/callback",</p>
+
+<pre><code>passport.authenticate("facebook",{ failureRedirect: '/login'}),
+function(req,res){
+    res.render("loggedin", {user : req.user});
+}
+</code></pre>
+
+<p>);</p>
+
+<p>```</p>
+
+<p>It use <code>passport.authenticate()</code> method and by passing "facebook" it knows that it should use Facebook strategy</p>
+
+<p>Third, if you don't use Facebook or etc for singing in the site and you fill the login form in "/login" route and submit it, it would send a post request to "/login" which is going to be checked and authenticated by passing "local" as a first argument of <code>passport.authenticate()</code> method. Also there is some options like <code>successRedirect</code> ,<code>failureRedirect</code>, or even <code>successFlash</code> and <code>failureFlash</code> if you use <a href="https://github.com/jaredhanson/connect-flash">connect-flash</a> .</p>
+
+<p>And lastly, passport have a built in logout() method that instead of destroying session like what we did before, we can use <code>req.logout()</code> on our "/logout" route.</p>
+
+<hr />
+
+<h1>Also,</h1>
+
+<p>Check out the jade files and routes to see how we welcome authenticated user's and also the can access to "/profile" route.</p>
+
+<p>If you have any question or even any hint to improve my knowledge I appreciate to hear from you <strong>@DaniaL_KH</strong> or <strong>dani_khosravi@yahoo.com</strong> .</p>
+
+<p>Hope you enjoy this simple tutorial.</p>
+
+<h2><a href="https://github.com/DanialK/PassportJS-Authentication">Source Code on Github</a></h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Simple Authentication In NodeJS]]></title>
+    <link href="http://DanialK.github.com/blog/2013/02/20/simple-authentication-in-nodejs/"/>
+    <updated>2013-02-20T21:46:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2013/02/20/simple-authentication-in-nodejs</id>
+    <content type="html"><![CDATA[<p>Hi everyone !!</p>
+
+<p>Today i'm going to show you my simple authentication practice.
+There is lots of good authentication modules out there which can be used as middleware like <a href="http://passportjs.org/">PassportJS</a> and <a href="https://github.com/bnoguchi/everyauth">Everyauth</a> and they are also very useful for integration your web site with social networks like Facebook and Twitter.
+I will cover both the mentions tools in future posts but today we are going to build our authentication functionality on our own !!</p>
+
+<p>Before we start I should mention that like always I used MongoDB as a database for saving and loading our users. And I integrate it with our app using Mongoose module. So make sure you have them installed or if you using my source files first run <code>npm install</code> . Also make sure you are running mongo server by running <code>mongod</code> in new shell.</p>
+
+<h1>Application Parts</h1>
+
+<ul>
+<li>Module Dependencies</li>
+<li>Database and Models</li>
+<li>Middlewares and configurations</li>
+<li>Helper Functions</li>
+<li>Routes</li>
+</ul>
+
+
+<!-- more -->
+
+
+<h3>Firstly, what is the pass.js?</h3>
+
+<p>As you may noticed in my source file folder i'm using a pass.js as a module in my app. I could have just save username and password of each user in my database for authentication but to make our simple app look a little bet serious I used this file which I copied form TJ examples. basically what it does is for making new user if you pass user password to it using  <code>crypto</code>, Node's built-in module, it encrypt our user's password and save it to db. And if we trying to sing in the function take the entered password and encrypt it and check it with a encrypted password which is saved in database and if they are same, it would log the user into the site.
+We could have don't use it but it's not a bad idea to use it !!</p>
+
+<hr />
+
+<h4><a href="https://github.com/DanialK/Simple-Authentication">Source Code In GitHub</a></h4>
+
+<h2>Module Dependencies</h2>
+
+<p>Just like every node and express application :</p>
+
+<p>``` js Module Dependencies
+var express = require('express'),</p>
+
+<pre><code>http = require('http'),
+mongoose = require('mongoose'),
+hash = require('./pass').hash;
+</code></pre>
+
+<p>var app = express();
+```</p>
+
+<h2>Database and Models</h2>
+
+<p>First we connect the application to our mongo server. Here I use myapp as my database.
+We specify the Schema which contain username and password. Also salt and hash which are for our encrypting part.
+Then class User which is our mongoose model and will write and read in "users" collection(document).</p>
+
+<p>``` js Database and Models
+mongoose.connect("mongodb://localhost/myapp");
+var UserSchema = new mongoose.Schema({</p>
+
+<pre><code>username: String,
+password: String,
+salt: String,
+hash: String
+</code></pre>
+
+<p>});</p>
+
+<p>var User = mongoose.model('users', UserSchema);
+```</p>
+
+<h2>Middlewares and configurations</h2>
+
+<p>I passed the middle wares which we need for our app.
+Every time weather we are successful in our authentication or not, our server send a message to the client. These messages are kept in <code>req.session.message</code> and the errors in <code>req.session.err</code>. We save this messages in two variables which have same name and then delete the session and make the session ready for next messages and errors. Then check if we have err or msg , we send them to client using res.locals.
+Now we can access the <code>message</code> inside our template engine which is jade.</p>
+
+<p>``` js Middlewares and configurations
+app.configure(function () {</p>
+
+<pre><code>app.use(express.bodyParser());
+app.use(express.cookieParser('Authentication Tutorial '));
+app.use(express.session());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+</code></pre>
+
+<p>});</p>
+
+<p>app.use(function (req, res, next) {</p>
+
+<pre><code>var err = req.session.error,
+    msg = req.session.success;
+delete req.session.error;
+delete req.session.success;
+res.locals.message = '';
+if (err) res.locals.message = '&lt;p class="msg error"&gt;' + err + '&lt;/p&gt;';
+if (msg) res.locals.message = '&lt;p class="msg success"&gt;' + msg + '&lt;/p&gt;';
+next();
+</code></pre>
+
+<p>});
+```</p>
+
+<h2>Helper Functions</h2>
+
+<p>In authenticate function, basically we pass the username and password which the user will enter and a callback function. It will use hash function form pass.js and check if the enters user name exist in data base and if it is, it check the password .</p>
+
+<p>requiredAuthentication is a function that we will pas as a middleware to the routes which needs authenticated user and if there isn't any authenticated user, redirect them to login page .</p>
+
+<p>userExist is function that I only passed it to "/signup" route to check weather the username that the new user trying to make, already exists or not .</p>
+
+<p>``` js Helper Functions</p>
+
+<p>function authenticate(name, pass, fn) {</p>
+
+<pre><code>if (!module.parent) console.log('authenticating %s:%s', name, pass);
+
+User.findOne({
+    username: name
+},
+
+function (err, user) {
+    if (user) {
+        if (err) return fn(new Error('cannot find user'));
+        hash(pass, user.salt, function (err, hash) {
+            if (err) return fn(err);
+            if (hash == user.hash) return fn(null, user);
+            fn(new Error('invalid password'));
+        });
+    } else {
+        return fn(new Error('cannot find user'));
+    }
+});
+</code></pre>
+
+<p>}</p>
+
+<p>function requiredAuthentication(req, res, next) {</p>
+
+<pre><code>if (req.session.user) {
+    next();
+} else {
+    req.session.error = 'Access denied!';
+    res.redirect('/login');
+}
+</code></pre>
+
+<p>}</p>
+
+<p>function userExist(req, res, next) {</p>
+
+<pre><code>User.count({
+    username: req.body.username
+}, function (err, count) {
+    if (count === 0) {
+        next();
+    } else {
+        req.session.error = "User Exist"
+        res.redirect("/signup");
+    }
+});
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<h2>Routes</h2>
+
+<ul>
+<li>"/" : if user authenticated, welcome her/him</li>
+<li>"/signup" : create a new user</li>
+<li>"/login" : check the user authentication</li>
+<li>"/profile" : is the route that only registered and authenticated user can access it</li>
+</ul>
+
+
+<p>``` js Routes
+app.get("/", function (req, res) {</p>
+
+<pre><code>if (req.session.user) {
+    res.send("Welcome " + req.session.user.username + "&lt;br&gt;" + "&lt;a href='http://DanialK.github.com/logout'&gt;logout&lt;/a&gt;");
+} else {
+    res.send("&lt;a href='http://DanialK.github.com/login'&gt; Login&lt;/a&gt;" + "&lt;br&gt;" + "&lt;a href='http://DanialK.github.com/signup'&gt; Sign Up&lt;/a&gt;");
+}
+</code></pre>
+
+<p>});</p>
+
+<p>app.get("/signup", function (req, res) {</p>
+
+<pre><code>if (req.session.user) {
+    res.redirect("/");
+} else {
+    res.render("signup");
+}
+</code></pre>
+
+<p>});</p>
+
+<p>app.post("/signup", userExist, function (req, res) {</p>
+
+<pre><code>var password = req.body.password;
+var username = req.body.username;
+
+hash(password, function (err, salt, hash) {
+    if (err) throw err;
+    var user = new User({
+        username: username,
+        salt: salt,
+        hash: hash,
+    }).save(function (err, newUser) {
+        if (err) throw err;
+        authenticate(newUser.username, password, function(err, user){
+            if(user){
+                req.session.regenerate(function(){
+                    req.session.user = user;
+                    req.session.success = 'Authenticated as ' + user.username + ' click to &lt;a href="http://DanialK.github.com/logout"&gt;logout&lt;/a&gt;. ' + ' You may now access &lt;a href="http://DanialK.github.com/restricted"&gt;/restricted&lt;/a&gt;.';
+                    res.redirect('/');
+                });
+            }
+        });
+    });
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get("/login", function (req, res) {</p>
+
+<pre><code>res.render("login");
+</code></pre>
+
+<p>});</p>
+
+<p>app.post("/login", function (req, res) {</p>
+
+<pre><code>authenticate(req.body.username, req.body.password, function (err, user) {
+    if (user) {
+
+        req.session.regenerate(function () {
+
+            req.session.user = user;
+            req.session.success = 'Authenticated as ' + user.username + ' click to &lt;a href="http://DanialK.github.com/logout"&gt;logout&lt;/a&gt;. ' + ' You may now access &lt;a href="http://DanialK.github.com/restricted"&gt;/restricted&lt;/a&gt;.';
+            res.redirect('/');
+        });
+    } else {
+        req.session.error = 'Authentication failed, please check your ' + ' username and password.';
+        res.redirect('/login');
+    }
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get('/logout', function (req, res) {</p>
+
+<pre><code>req.session.destroy(function () {
+    res.redirect('/');
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get('/profile', requiredAuthentication, function (req, res) {</p>
+
+<pre><code>res.send('Profile page of '+ req.session.user.username +'&lt;br&gt;'+' click to &lt;a href="http://DanialK.github.com/logout"&gt;logout&lt;/a&gt;');
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>I've tried to cover important part of a authentication with node in this post. Hope you enjoy it.</p>
+
+<p>In future posts I will cover authentication with Facebook or Twitter account using two popular authentication modules <a href="http://passportjs.org/">PassportJS</a> and <a href="https://github.com/bnoguchi/everyauth">Everyauth</a>. Stay tuned !!!</p>
+
+<h4><a href="https://github.com/DanialK/Simple-Authentication">Source Code In GitHub</a></h4>
+]]></content>
+  </entry>
+  
+</feed>

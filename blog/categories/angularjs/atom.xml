@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Angularjs | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/angularjs/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Filtering in BackboneJS and AngularJS]]></title>
+    <link href="http://DanialK.github.com/blog/2013/06/08/filtering-in-backbonejs-and-angularjs/"/>
+    <updated>2013-06-08T20:41:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/06/08/filtering-in-backbonejs-and-angularjs</id>
+    <content type="html"><![CDATA[<p>Hi everyone !!!</p>
+
+<p>I'm working on a backbone project at the moment . I have an collection of data and i wanted to filter through them. Using a bit of backbone code I inject this function to my application. This wasn't a pain at all. However after a bit of playing with AngularJS, I thought it would be cool to show you how filtering works both worlds!!</p>
+
+<!-- more -->
+
+
+<h2>BackboneJS:</h2>
+
+<p>First I add this method to my collection :</p>
+
+<p>``` js</p>
+
+<p>var MyCollection = Backbone.Collection.extend({</p>
+
+<pre><code>model: MyModel,
+
+search : function(letters){
+    if(letters == "") return this;
+    var pattern = new RegExp(letters,"gi");
+    return _(this.filter(function(data) {
+        return pattern.test(data.get("name"));
+    }));
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>using underscore filter method that baked into backbone collections I filter through this collection by using a simple regular expression and testing it with all models name!</p>
+
+<p>Now I have an searchItemView that I can use it's module everywhere in my application that i want to search though collection.</p>
+
+<p>``` js
+var searchItemView = Backbone.View.extend({</p>
+
+<pre><code>template:'&lt;label&gt;Search :&lt;/label&gt;'+'&lt;input type="text" id="searchItem" /&gt;',
+
+tagName: "form",
+
+events : {
+    'keyup #searchItem' : 'search'
+},
+
+initialize : function(options){
+    this.collection = options.collection;
+    this.parentView = options.parentView;
+},
+
+render: function () {
+    this.$el.html(this.template);
+    return this;
+},
+
+search : function(e){
+    var letters = $("#searchItem").val();
+    var filterd = this.collection.search(letters);
+    var parentView = this.parentView;
+    parentView.$('#items').empty();
+    filterd.each(function(item){
+        parentView.addOne(item);
+    });
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```
+I just pass the collection and parent view to it and it will filter my collection and re-render each model. It will empty the view and using addOne re-render filtered result. addOne method is a method in my parentView that render each item into collection view.</p>
+
+<p>That's it !!</p>
+
+<h2>AngularJS:</h2>
+
+<p>Now i'm going to show you a little magic of angular and it's directives !!
+I still love my backbone, but it's so cool :D !!!!</p>
+
+<p>It's all the code :</p>
+
+<p>``` js</p>
+
+<p><html ng-app>
+<head></p>
+
+<pre><code>&lt;script src="components/angular/angular.js"&gt;&lt;/script&gt;   
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;div ng-controller='Ctrl'&gt;
+    //search model
+    &lt;input type="text" ng-model='search'&gt;
+    &lt;ul&gt;
+        &lt;li ng-repeat='name in names | filter:search'&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+    function Ctrl ($scope) {
+        $scope.names = ['Danial','John','Jane'];
+    }
+&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html></p>
+
+<p>```</p>
+
+<p>All these html are there just to show you whats happening there but the magic is when we bind filter directive to search model<code>&lt;li ng-repeat='name in names | filter:search'&gt;&lt;/li&gt;</code>.</p>
+
+<p>Thats it !!!</p>
+]]></content>
+  </entry>
+  
+</feed>

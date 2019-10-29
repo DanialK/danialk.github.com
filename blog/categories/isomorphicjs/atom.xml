@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: IsomorphicJS | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/isomorphicjs/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Talk Slides: Isomorphic JavaScript What? Why? How?]]></title>
+    <link href="http://DanialK.github.com/blog/2015/12/17/talk-slides-isomorphic-javascript/"/>
+    <updated>2015-12-17T15:09:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2015/12/17/talk-slides-isomorphic-javascript</id>
+    <content type="html"><![CDATA[<script async class="speakerdeck-embed" data-id="9b21278e27b745d5a01c57c7372ff215" data-ratio="1.33333333333333" src="http://DanialK.github.com//speakerdeck.com/assets/embed.js"></script>
+
+
+
+
+<!-- more -->
+
+
+<p>Slides of the talk about Isomorphic JavaScript and React I gave a while ago in July.</p>
+
+<p><img src="/images/isoninja_talk_1.jpg">
+<img src="/images/isoninja_talk_2.jpg">
+<img src="/images/isoninja_talk_3.jpg"></p>
+
+<p><a href="https://www.evernote.com/shard/s243/sh/08e0c2d5-5beb-4858-af82-917991bff3ea/b185c6c291ee6273">Photos</a></p>
+
+<p><a href="" title="https://github.com/DanialK/nodejs-ninjas-isomorphic-talk-codes">Source Code</a></p>
+]]></content>
+  </entry>
+  
+</feed>

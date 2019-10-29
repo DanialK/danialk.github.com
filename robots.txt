@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://DanialK.github.com/sitemap.xml 

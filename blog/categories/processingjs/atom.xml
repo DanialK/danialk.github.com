@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ProcessingJS | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/processingjs/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Arduino, ProcessingJS and SocketIO In Action]]></title>
+    <link href="http://DanialK.github.com/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action/"/>
+    <updated>2014-04-26T21:06:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2014/04/26/arduino-and-processingjs-and-socketio-in-action</id>
+    <content type="html"><![CDATA[<p>So today I wanted to do something relatively cool(!!) with things that I had around me. There are a lot of examples out there that sends input values from Arduino to Processing and then draw something cool. I wanted to do something a bit cooler and as always I wanted to bring Javascript into the action.
+In this tutorial i'm showing you how I connected my Arduino to a local NodeJS server and with the use of SocketIO send the value of potentiometer to client side and draw a cool graph with ProcessingJS !!!</p>
+
+<!-- more -->
+
+
+<h3>Arduino</h3>
+
+<p>We begin with setting up the Arduino board and program it to write the value of potentiometer into serial port.</p>
+
+<p>I used following schematic to set wire up my board to potentiometer:</p>
+
+<p><img src="/images/arduino-processingjs-socketio.png"></p>
+
+<p>Now using the following code, we read the value of potentiometer
+``` js
+void setup() {
+  // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+}</p>
+
+<p>void loop() {
+  // read the input on analog pin 0:
+  int sensorValue = analogRead(A0);
+  // map the value between 0 to 90 :
+  float val = map(sensorValue,0,1023,0,90);
+  // print out the value :
+  Serial.println(val);
+}
+```</p>
+
+<p>Note that I mapped our analog value of potentiometer, which is between 0 to 1023, to a number between 0 to 90. It's because we need our value to be in that range so our processing example would draw correctly.</p>
+
+<h3>Server</h3>
+
+<p>Our server needs to have access to the same serial port that the Arduino is connected to read the value and send it to the client using SocketIO.
+This node server also uses ExpressJS to serve the static files.
+My Arduino is connected to <code>/dev/tty.usbmodem1421</code> . In Arduino app if you go to tools/serial port the one that has check next to it is the port that your Arduino board is connected. Windows users your port would start with <code>COM</code>.</p>
+
+<p>``` js
+var http = require('http');
+var express = require('express');
+var app = express();
+var SerialPort = require("serialport").SerialPort;
+var server = http.createServer(app).listen(3000);
+var io = require('socket.io').listen(server);</p>
+
+<p>app.use(express.static(__dirname + '/public'));</p>
+
+<p>var serialport = new SerialPort("/dev/tty.usbmodem1421"); // replace this address with your port address
+serialport.on('open', function(){</p>
+
+<pre><code>// Now server is connected to Arduino
+console.log('Serial Port Opend');
+
+var lastValue;
+io.sockets.on('connection', function (socket) {
+    //Connecting to client 
+    console.log('Socket connected');
+    socket.emit('connected');
+    var lastValue;
+
+    serialport.on('data', function(data){
+        var angle = data[0];
+        if(lastValue !== angle){
+            socket.emit('data', angle);
+        }
+        lastValue = angle;
+    });
+});
+</code></pre>
+
+<p>});</p>
+
+<p>```
+Keep that in mind that Arduino constantly reads the value of potentiometer and writes it into the serial. If we emit every single value that comes into the serial port app would be slow. That's why we keep the value from serial port in lastValue and check it each time and if it changed we're going to emit the value to the client.</p>
+
+<h3>Client Side</h3>
+
+<p>In our browser <code>script.js</code>, we're listening for data event on socket and we're going to show the value on the screen as well as assigning it to our angle variable.</p>
+
+<p>``` js</p>
+
+<p>var dialogue = document.getElementById('dialogue');
+var box = document.getElementById('angle');
+socket.on('connected', function(){</p>
+
+<pre><code>dialogue.innerHTML = "Socket Connected";
+</code></pre>
+
+<p>});
+socket.on('disconnect', function(){</p>
+
+<pre><code>dialogue.innerHTML = "Socket Disconnected";
+</code></pre>
+
+<p>});
+socket.on('data', function (data) {</p>
+
+<pre><code>box.innerHTML = data;
+angle = data;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>pretty easy right?</p>
+
+<h3>ProcessingJS</h3>
+
+<p>I'm not an expert in Processing but good news is i've started learning more about Processing language and trying to make some cool stuff with it. So I found this example in ProcessingJS website which I thinks it's perfect for this little project(it exactly gives you that feeling that something is changing as you play with the potentiometer).</p>
+
+<p><a href="http://processingjs.org/learning/topic/tree/">Link to the example on ProcessingJS website</a></p>
+
+<p>After including the ProcessingJS to our HTML page, like below we load our tree.pde, which is a processing file into our app and ProcessingJS will compile and draw it for us into our canvas. You just have to give the path of the file in your filesystem relative to the index.html file.
+<code>js
+&lt;canvas id="tree" data-processing-sources="tree.pde"&gt;&lt;/canvas&gt;
+</code></p>
+
+<p>The only difference of this tree.pde and actual code on the ProcessingJS website is that in the actual code, they generate the angle from position of you mouse on the canvas. However in our example we get the angle from our Arduino. The cool thing about ProcessingJS is that because it compiles processing code into Javascript, then you are allowed to write Javascript inside your processing code and you have access to all the Javascript functions and variables. That's why we can directly replace the <code>float a = (mouseX / (float) width) * 90f;</code> in the actual code with <code>float a = angle;</code> which angle is a global variable and it's value changes everytime our client code receives new value form server.</p>
+
+<h3>Result</h3>
+
+<p>Here is a gif of the result. As you can see I have tree windows open and they are all sync together because of the realtime communication of client and server using SocketIO.</p>
+
+<p><img class="thumb" src="/images/arduino-processingjs-socketio-gif-thumb.png"></p>
+
+<h4>The source code of this project is available <a href="https://github.com/DanialK/arduino-processingjs-socketio">HERE</a> on github.</h4>
+
+<p>Make sure to run <code>npm install &amp;&amp; bower install</code> to install all the dependencies.
+Connect your Arduino board to the same port that you set in your app.js and then run <code>npm start</code> and head over to <code>localhost:3000</code> to see the magic !!!</p>
+
+<p>Hope you guys enjoyed it !!
+If you had any question use comments below or send me your questions at dani_khosravi@yahoo.com. Also follow me on <a href="https://twitter.com/DaniaL_KH">twitter</a> if your interested in Arduino, Javascript and these sort of goodies :D</p>
+
+<p><script type="text/javascript">
+	$(document).ready(function(){
+		var thumb = $('.thumb');
+		var thumbSrc = thumb.attr('src');
+		var gifSrc = thumbSrc.slice(0, thumbSrc.indexOf('-gif-thumb')) + '.gif';
+		thumb.one('click', function() {
+			$(this).attr('src', gifSrc);
+		});
+	});
+</script></p>
+]]></content>
+  </entry>
+  
+</feed>

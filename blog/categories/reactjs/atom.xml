@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ReactJS | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/reactjs/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sudoku Written Using ES6 React and Redux]]></title>
+    <link href="http://DanialK.github.com/blog/2016/01/15/sudoku-written-using-es6-react-redux/"/>
+    <updated>2016-01-15T02:17:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2016/01/15/sudoku-written-using-es6-react-redux</id>
+    <content type="html"><![CDATA[<p><link rel="stylesheet" type="text/css" href="http://DanialK.github.com/stylesheets/custom/react_redux_sudoku.css"></p>
+
+<div id='root'></div>
+
+
+<script src="http://DanialK.github.com/javascripts/custom/react_redux_sudoku.js"></script>
+
+
+<h4><a href="https://github.com/DanialK/react-redux-sudoku">Source Code</a></h4>
+
+<!-- more -->
+
+
+<p>A sudoku app I wrote in React and Redux recently</p>
+
+<h5>Built wth:</h5>
+
+<ul>
+<li>ES6 using <a href="https://babeljs.io/">Babel</a> transpiler</li>
+<li><a href="https://facebook.github.io/react/">React</a></li>
+<li><a href="http://redux.js.org/">Redux</a></li>
+<li><a href="https://lodash.com]">Lodash</a></li>
+<li><a href="https://webpack.github.io/">Webpack</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Talk Slides: Isomorphic JavaScript What? Why? How?]]></title>
+    <link href="http://DanialK.github.com/blog/2015/12/17/talk-slides-isomorphic-javascript/"/>
+    <updated>2015-12-17T15:09:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2015/12/17/talk-slides-isomorphic-javascript</id>
+    <content type="html"><![CDATA[<script async class="speakerdeck-embed" data-id="9b21278e27b745d5a01c57c7372ff215" data-ratio="1.33333333333333" src="http://DanialK.github.com//speakerdeck.com/assets/embed.js"></script>
+
+
+
+
+<!-- more -->
+
+
+<p>Slides of the talk about Isomorphic JavaScript and React I gave a while ago in July.</p>
+
+<p><img src="/images/isoninja_talk_1.jpg">
+<img src="/images/isoninja_talk_2.jpg">
+<img src="/images/isoninja_talk_3.jpg"></p>
+
+<p><a href="https://www.evernote.com/shard/s243/sh/08e0c2d5-5beb-4858-af82-917991bff3ea/b185c6c291ee6273">Photos</a></p>
+
+<p><a href="" title="https://github.com/DanialK/nodejs-ninjas-isomorphic-talk-codes">Source Code</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ReactJS and Socket.IO Chat Application]]></title>
+    <link href="http://DanialK.github.com/blog/2013/06/16/reactjs-and-socket-dot-io-chat-application/"/>
+    <updated>2013-06-16T19:52:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/06/16/reactjs-and-socket-dot-io-chat-application</id>
+    <content type="html"><![CDATA[<h2>Updated(13/7/2015)</h2>
+
+<p>A week ago I was playing with AngularJS and <a href="https://github.com/btford/angular-socket-io-im">this</a> little chat application which uses socket.io and nodejs for realtime communication.
+Yesterday I saw a post about <a href="http://facebook.github.io/react">ReactJS</a> in EchoJS and started playing with this UI library. After playing a bit with React, I decided to write and chat application using React and I used <a href="https://github.com/btford/angular-socket-io-im">Bran Ford's Backend</a> for server side of this little app.</p>
+
+<!-- more -->
+
+
+<h4>Note About Server</h4>
+
+<p>It's the same backend used <a href="https://github.com/btford/angular-socket-io-im">this</a> but with a bit of clean up.
+When you connect to server it give you a name like "Guest1" and you can change it. Changing Name broadcast a 'change:name' event to all other users. Also sending message broadcast 'send:message' event to others. Also it inform others when a user disconnect or connect.</p>
+
+<h2>ReactJS Introduction :</h2>
+
+<p>First I suggest you to take a look at tutorial page in react's website.</p>
+
+<p>Like what website says, React components implement a render() method that takes input data and returns what to display. A cool thing about React is that you can write your html inside your javascript(I know we always try not to do so, but it's a bit different here). They call this XML like syntax <a href="http://facebook.github.io/react/docs/syntax.html">JSX</a>.</p>
+
+<p>React is not very complicated. You only need to understand components lifecycles and difference of props and state. In JSX for passing your (model) data to your components, you pass them like html attributes, and you can use them inside the component through this.props !!
+States are a pieces of data inside your UI that you can change them and set them back and class's render method will take care of rendering them !!
+Also for the people that have Backbone background, React's components are like backbone views. It doesn't mean that it replace the backbone view, but they have their own use cases which i'm sure after playing with react you'll get it !!</p>
+
+<p>Again suggest to check the website docs and then jump back here, it's cool !!!</p>
+
+<h2>Lets Begin</h2>
+
+<p>Application Components Structure is like this :</p>
+
+<p>```</p>
+
+<pre><code>- ChatApp
+    - UserList
+    - MessageList
+        -Message
+    - MessageForm
+    - ChangeNameForm
+</code></pre>
+
+<p>```</p>
+
+<h4>UserList:</h4>
+
+<p>Inside this component I have and renderUser function which return a html with the data that we pass to it !
+Render function return the li tag for each of the users, that we want to pass to this component.</p>
+
+<p>``` js</p>
+
+<p>var UsersList = React.createClass({</p>
+
+<pre><code>render() {
+    return (
+        &lt;div className='users'&gt;
+            &lt;h3&gt; Online Users &lt;/h3&gt;
+            &lt;ul&gt;
+                {
+                    this.props.users.map((user, i) =&gt; {
+                        return (
+                            &lt;li key={i}&gt;
+                                {user}
+                            &lt;/li&gt;
+                        );
+                    })
+                }
+            &lt;/ul&gt;               
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h4>Message And MessageList:</h4>
+
+<p>Message class's job is just to render a single message and it is so straight forward.</p>
+
+<p>``` js</p>
+
+<p>var Message = React.createClass({</p>
+
+<pre><code>render() {
+    return (
+        &lt;div className="message"&gt;
+            &lt;strong&gt;{this.props.user} :&lt;/strong&gt; 
+            &lt;span&gt;{this.props.text}&lt;/span&gt;      
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>The cool part of react starts when you use these components like and html tag inside another, which in this case our message list contains a function to render each message inside it's div.</p>
+
+<p>``` js</p>
+
+<p>var MessageList = React.createClass({</p>
+
+<pre><code>render() {
+    return (
+        &lt;div className='messages'&gt;
+            &lt;h2&gt; Conversation: &lt;/h2&gt;
+            {
+                this.props.messages.map((message, i) =&gt; {
+                    return (
+                        &lt;Message
+                            key={i}
+                            user={message.user}
+                            text={message.text} 
+                        /&gt;
+                    );
+                })
+            } 
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h4>MessageForm And ChangeNameForm:</h4>
+
+<p>These two our quite similar. We have a submit handler that take the message and give it to the callback of it's parent component(ChatApp) for future rendering and emitting to server. Also it keep track of the message when you type and assign it to a property (like text) in state using setState. And in we can use this data in it's class state.</p>
+
+<p>``` js</p>
+
+<p>var MessageForm = React.createClass({</p>
+
+<pre><code>getInitialState() {
+    return {text: ''};
+},
+
+handleSubmit(e) {
+    e.preventDefault();
+    var message = {
+        user : this.props.user,
+        text : this.state.text
+    }
+    this.props.onMessageSubmit(message);    
+    this.setState({ text: '' });
+},
+
+changeHandler(e) {
+    this.setState({ text : e.target.value });
+},
+
+render() {
+    return(
+        &lt;div className='message_form'&gt;
+            &lt;h3&gt;Write New Message&lt;/h3&gt;
+            &lt;form onSubmit={this.handleSubmit}&gt;
+                &lt;input
+                    onChange={this.changeHandler}
+                    value={this.state.text}
+                /&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var ChangeNameForm = React.createClass({</p>
+
+<pre><code>getInitialState() {
+    return {newName: ''};
+},
+
+onKey(e) {
+    this.setState({ newName : e.target.value });
+},
+
+handleSubmit(e) {
+    e.preventDefault();
+    var newName = this.state.newName;
+    this.props.onChangeName(newName);   
+    this.setState({ newName: '' });
+},
+
+render() {
+    return(
+        &lt;div className='change_name_form'&gt;
+            &lt;h3&gt; Change Name &lt;/h3&gt;
+            &lt;form onSubmit={this.handleSubmit}&gt;
+                &lt;input
+                    onChange={this.onKey}
+                    value={this.state.newName} 
+                /&gt;
+            &lt;/form&gt; 
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h4>ChatApp</h4>
+
+<p>Last component is ChatApp, in which we put all these small components together to run our app.</p>
+
+<p>React's classes has a getInitialState function which expect us to return the initial data of class. <code>componentDidMount</code> gets called after the component mounted, therefore it's the best place to attach our socket.io listeners.</p>
+
+<p>``` js</p>
+
+<p>var ChatApp = React.createClass({</p>
+
+<pre><code>getInitialState() {
+    return {users: [], messages:[], text: ''};
+},
+
+componentDidMount() {
+    socket.on('init', this._initialize);
+    socket.on('send:message', this._messageRecieve);
+    socket.on('user:join', this._userJoined);
+    socket.on('user:left', this._userLeft);
+    socket.on('change:name', this._userChangedName);
+},
+
+_initialize(data) {
+    var {users, name} = data;
+    this.setState({users, user: name});
+},
+
+_messageRecieve(message) {
+    var {messages} = this.state;
+    messages.push(message);
+    this.setState({messages});
+},
+
+_userJoined(data) {
+    var {users, messages} = this.state;
+    var {name} = data;
+    users.push(name);
+    messages.push({
+        user: 'APPLICATION BOT',
+        text : name +' Joined'
+    });
+    this.setState({users, messages});
+},
+
+_userLeft(data) {
+    var {users, messages} = this.state;
+    var {name} = data;
+    var index = users.indexOf(name);
+    users.splice(index, 1);
+    messages.push({
+        user: 'APPLICATION BOT',
+        text : name +' Left'
+    });
+    this.setState({users, messages});
+},
+
+_userChangedName(data) {
+    var {oldName, newName} = data;
+    var {users, messages} = this.state;
+    var index = users.indexOf(oldName);
+    users.splice(index, 1, newName);
+    messages.push({
+        user: 'APPLICATION BOT',
+        text : 'Change Name : ' + oldName + ' ==&gt; '+ newName
+    });
+    this.setState({users, messages});
+},
+
+handleMessageSubmit(message) {
+    var {messages} = this.state;
+    messages.push(message);
+    this.setState({messages});
+    socket.emit('send:message', message);
+},
+
+handleChangeName(newName) {
+    var oldName = this.state.user;
+    socket.emit('change:name', { name : newName}, (result) =&gt; {
+        if(!result) {
+            return alert('There was an error changing your name');
+        }
+        var {users} = this.state;
+        var index = users.indexOf(oldName);
+        users.splice(index, 1, newName);
+        this.setState({users, user: newName});
+    });
+},
+
+render() {
+    return (
+        &lt;div&gt;
+            &lt;UsersList
+                users={this.state.users}
+            /&gt;
+            &lt;MessageList
+                messages={this.state.messages}
+            /&gt;
+            &lt;MessageForm
+                onMessageSubmit={this.handleMessageSubmit}
+                user={this.state.user}
+            /&gt;
+            &lt;ChangeNameForm
+                onChangeName={this.handleChangeName}
+            /&gt;
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>Take a look at render function. We used our components and we assign their properties like and html attributes which is equals to a react expression. Inside the expressions we used the main data that come from backend, like users and messages, and are in ChatApp's state.</p>
+
+<p>Last but not least, using <code>React.render</code>, we render the ChatApp and in the app div.</p>
+
+<p>``` js</p>
+
+<p>React.render(<ChatApp/>, document.getElementById('app'));</p>
+
+<p>```</p>
+
+<p>You can see the source code <a href="https://github.com/DanialK/ReactJS-Realtime-Chat">here</a>.</p>
+
+<p>Hope it helped you get up and running with React!!</p>
+
+<hr />
+
+<p>***Update(9/8/2013): Update to React v0.4.1</p>
+
+<h4>***Update(13/7/2015):</h4>
+
+<p>Ok after 2 years, a lot of things has changed, but React (&lt;3) is still an awesome library !!</p>
+
+<p>Here's list of changes:</p>
+
+<pre><code>* Update to React v0.13 + Required changes in the code
+* Using Browserify + Babelify to compile our JSX files
+* Using ES6 way of defining methods inside the classes and arrow functions + some other ES6 goodies
+* Server updated to Express v4.13 
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

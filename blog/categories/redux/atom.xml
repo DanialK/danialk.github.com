@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Redux | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/redux/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sudoku Written Using ES6 React and Redux]]></title>
+    <link href="http://DanialK.github.com/blog/2016/01/15/sudoku-written-using-es6-react-redux/"/>
+    <updated>2016-01-15T02:17:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2016/01/15/sudoku-written-using-es6-react-redux</id>
+    <content type="html"><![CDATA[<p><link rel="stylesheet" type="text/css" href="http://DanialK.github.com/stylesheets/custom/react_redux_sudoku.css"></p>
+
+<div id='root'></div>
+
+
+<script src="http://DanialK.github.com/javascripts/custom/react_redux_sudoku.js"></script>
+
+
+<h4><a href="https://github.com/DanialK/react-redux-sudoku">Source Code</a></h4>
+
+<!-- more -->
+
+
+<p>A sudoku app I wrote in React and Redux recently</p>
+
+<h5>Built wth:</h5>
+
+<ul>
+<li>ES6 using <a href="https://babeljs.io/">Babel</a> transpiler</li>
+<li><a href="https://facebook.github.io/react/">React</a></li>
+<li><a href="http://redux.js.org/">Redux</a></li>
+<li><a href="https://lodash.com]">Lodash</a></li>
+<li><a href="https://webpack.github.io/">Webpack</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

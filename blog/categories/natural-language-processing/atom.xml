@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Natural Language Processing | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/natural-language-processing/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Shipping Deep Learning Models in Web and Mobile Applications]]></title>
+    <link href="http://DanialK.github.com/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/"/>
+    <updated>2018-06-23T23:16:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications</id>
+    <content type="html"><![CDATA[<h3>Web Application (running in your browser!)</h3>
+
+<p><link rel="stylesheet" type="text/css" href="http://DanialK.github.com/stylesheets/custom/livesentiment/livesentiment_post.css"></p>
+
+<div id="livesentimentIframeHolder">
+    <button id="liveSentimentStart">Start</button>
+</div>
+
+
+
+
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event) { 
+    $('#liveSentimentStart').on("click", function() {
+        if(!$('#livesentimentIframe').length) {
+            $('#livesentimentIframeHolder').html('<iframe id="livesentimentIframe" src="http://DanialK.github.com/javascripts/custom/livesentiment/index.html"></iframe>');
+        }
+    }); 
+});
+</script>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+<h3>IOS Application</h3>
+
+<div style="display: flex;justify-content: center;align-items: center;">
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Weekend project. Will be open sourced soonish !! <a href="https://twitter.com/hashtag/Sentimentanalysis?src=hash&amp;ref_src=twsrc%5Etfw">#Sentimentanalysis</a> <a href="https://twitter.com/hashtag/DeepLearning?src=hash&amp;ref_src=twsrc%5Etfw">#DeepLearning</a> <a href="https://twitter.com/hashtag/ReactNative?src=hash&amp;ref_src=twsrc%5Etfw">#ReactNative</a> <a href="https://twitter.com/hashtag/MachineLearning?src=hash&amp;ref_src=twsrc%5Etfw">#MachineLearning</a> <a href="https://twitter.com/hashtag/NLP?src=hash&amp;ref_src=twsrc%5Etfw">#NLP</a> <a href="https://t.co/EyECl7waNF">pic.twitter.com/EyECl7waNF</a></p>&mdash; Danial (@DaniaL_KH) <a href="https://twitter.com/DaniaL_KH/status/975196959450447872?ref_src=twsrc%5Etfw">March 18, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+
+<p> <a href="https://github.com/DanialK/livesentiment"><strong>Source Code</strong></a></p>
+
+<!-- more -->
+
+
+
+
+<br/>
+
+
+<p>Creating machine learning models are often very fun for us AI/ML/DL enthusiasts and thanks to Python's great community and great libraries such as TensroFlow and Keras this process has become very easy. With the help of Keras we can put layers together like pieces of a puzzle and focus on our architecture and performance and make things work within our beloved Jupyter Notebooks.</p>
+
+<p>In practice, we often are building these models to help our users/clients and often we need to be able to ship these models somewhere and integrate them with our applications so our users can benefit from our models.</p>
+
+<p>A usual approach is to create an API over the model so our backend can communicate with it and send the results back to the client. However, there are a few issues with this approach:</p>
+
+<ul>
+<li><p>First issue is the latency. Our app probably wouldn't be as responsive as we want it to be if we have to make calls to our back-end and wait for the result to come back.</p></li>
+<li><p>The second issue is the legal implications of sending user's text or image over the network. Imagine if you have a translator app that takes an image of a document and translates the document for you. If your user is going to translate a confidential legal document with this app, it complicates the legal implications of your applications and the type of security you need to build around it.</p></li>
+<li><p>Lastly, with this approach our users cannot benefit from our app when they are offline.</p></li>
+</ul>
+
+
+<br/>
+
+
+
+
+<blockquote>
+What if we could bundle our models with our app so all the model scoring could happen our their machine and they don't need to be online?
+<br/>
+Well, that is exactly the solution.
+</blockquote>
+
+
+<p>We often make our models very deep to squeeze out as much accuracy as we can. But in reality a model that is 88% accurate and runs fast on an average mobile device and is very small in size is much better than a deep model that is offering 90% accurate but it's not responsive on slow devices and increases our bundle size by big amount.</p>
+
+<p>By tweaking our architecture and letting go of a few accuracy points, we often can create smaller versions of our models that are shippable in a mobile app or can be served over the web and can bring a lot of value to our users.</p>
+
+<h3>Few rules of thumb on the architecture of models:</h3>
+
+<ul>
+<li><p>Start small and go big/deep</p></li>
+<li><p>Use Convolutions instead of LSTMs or GRUs wherever you can. LSTMs and GRUs are great and often times they are our only solution when not just remembering the past, but also the order of the information matters to our problem. However, there are many cases that Convolutions can offer the same accuracy if not better than LSTMs when our problem is translational invariant such as sentiment analysis or most of the computer vision problems.</p></li>
+<li><p>Remember in practice, 85% accuracy is often better than not having the feature in our application at all so don't bother too much and improve incrementally</p></li>
+</ul>
+
+
+<h3>Source Code</h3>
+
+<p>To demonstrate the idea, I created a sentiment analysis application that runs:</p>
+
+<ul>
+<li>on browser using TensorFlowJS in React application</li>
+<li>on IOS using CoreML in a React Native Application</li>
+<li>I didn't bother with the Android after getting IOS and Web working, but if anyone sends a PR I'd be glad to merge</li>
+</ul>
+
+
+<p>You can find all the codes for model training, web and mobile application <a href="https://github.com/DanialK/livesentiment"><strong>HERE ON GITHUB</strong></a></p>
+
+<h3>Resources:</h3>
+
+<ul>
+<li><a href="https://keras.io/">Keras</a></li>
+<li><a href="https://js.tensorflow.org/">TensorFlow.JS</a></li>
+<li><a href="https://Reactjs.org">React</a></li>
+<li><a href="https://facebook.github.io/react-native/">React Native</a></li>
+<li><a href="https://attardi.org/pytorch-and-coreml">How I Shipped a Neural Network on iOS with CoreML, PyTorch, and React Native</a></li>
+<li><a href="https://willowtreeapps.com/ideas/integrating-trained-models-into-your-ios-app-using-core-ml">Integrating trained models into your iOS app using Core ML</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Backbone | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/backbone/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Advanced Security In Backbone Application]]></title>
+    <link href="http://DanialK.github.com/blog/2013/07/28/advanced-security-in-backbone-application/"/>
+    <updated>2013-07-28T01:45:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/07/28/advanced-security-in-backbone-application</id>
+    <content type="html"><![CDATA[<p>Recently I was working on the security part of my application and I was experimenting lots of different ways for keeping the single page application secure and authorised. I saw an example of authentication in AngularJS which I found it really interesting and easy and as always(:D) started thinking how to do the same thing in my Backbone application. I tried to cover most of the advanced stuff that we need in most of web applications and usually in books and screencast about backbone there isn't mush about it and it can be nightmare for beginners !!</p>
+
+<p>For the rest of this article i'm going to explain this sample application that I wrote which I tried to demonstrate route filtering, session management and securing requests using CSRF-Token in a Backbone Application.</p>
+
+<!-- more -->
+
+
+<h3>Source Code</h3>
+
+<p>Firstly I want you to download the source code and take a look at it.
+<a href="https://github.com/DanialK/advanced-security-in-backbone">GitHub</a>
+In the rest of the article I just talk about important parts of application and highly recommend it to take a look at the source code.</p>
+
+<h1>Server</h1>
+
+<p>I'm using express as server side framework of this sample application. Using the csrf() middleware we are adding CSRF token to all of our request and if we don't get CSRF back from the client it send an error(403) to client.
+Then using jade, assign this initial CSRF token to csrf global variable in our main rendered html file that we are going to send to client.
+Also when user logout, we clear the session and set new CSRF token into server's session and then send it to client.</p>
+
+<p>```js</p>
+
+<p>/<em>*
+ * Module dependencies.
+ </em>/</p>
+
+<p>var express = require('express')
+  , http = require('http')
+  , path = require('path')
+  , uid = require('uid2');</p>
+
+<p>var app = express();</p>
+
+<p>// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', <em><em>dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.cookieParser('NOTHING'));
+app.use(express.session());
+// This middleware adds </em>csrf to
+// our session
+// req.session.</em>csrf
+app.use(express.csrf());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(function(req, res, next){</p>
+
+<pre><code>res.setHeader('X-CSRF-Token', req.session._csrf);
+next();
+</code></pre>
+
+<p>});
+app.use(express.static(path.join(__dirname, 'public')));
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Application Routes
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>app.get("/", function(req, res){</p>
+
+<pre><code>//send and csrf token with frist request
+//and assign it to a global csrf variable
+//inside the template
+res.render('index', {
+    csrf : req.session._csrf
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get("/session", function(req, res){</p>
+
+<pre><code>//Check for authentication
+if(req.session.user){
+    res.send(200, {
+        auth : true,
+        user : req.session.user
+    });
+}else{
+    res.send(401, {
+        auth : false,
+        csrf : req.session._csrf
+    });
+}
+</code></pre>
+
+<p>});</p>
+
+<p>app.post("/session/login", function(req, res){</p>
+
+<pre><code>var email = req.body.email;
+var password = req.body.password;
+for (var i = 0; i &lt; Users.length; i++) {
+    var user = Users[i];
+    if(user.email == email &amp;&amp; user.password == password){
+        req.session.user = user;
+        return res.send(200, {
+            auth : true,
+            user : user
+        });
+    }
+};
+return res.send(401);
+</code></pre>
+
+<p>});</p>
+
+<p>app.del("/session/logout", function(req, res){</p>
+
+<pre><code>//Sending new csrf to client when user logged out
+//for next user to sign in without refreshing the page
+req.session.user = null;
+req.session._csrf = uid(24);
+
+res.send(200, {
+    csrf : req.session._csrf
+});
+</code></pre>
+
+<p>});</p>
+
+<p>app.get('/users/:id', Auth, function(req, res){</p>
+
+<pre><code>//Using the Auth filter for this route
+//to check for authentication before sending data
+var id = req.params.id;
+
+for (var i = 0; i &lt; Users.length; i++) {
+    if(id == Users[i].id){
+        return res.send(Users[i]);
+    }
+};
+return res.send(400);
+</code></pre>
+
+<p>});</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Route Filters
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>//Authentication Filter
+function Auth (req, res, next) {</p>
+
+<pre><code>if(req.session.user){
+    next();
+}else{
+    res.send(401,{
+        flash : 'Plase log in first'
+    });
+}
+</code></pre>
+
+<p>}</p>
+
+<p>/* ------------------------------------------------</p>
+
+<pre><code>Dummy Database
+</code></pre>
+
+<p>   ------------------------------------------------*/</p>
+
+<p>var Users = [</p>
+
+<pre><code>{
+    firstName : 'Danial',
+    lastName : 'Khosravi',
+    password : 'pass',
+    email : 'backbone@authentication.com',
+    id : 1
+},
+{
+    firstName : 'John',
+    lastName : 'Doe',
+    password : 'jd',
+    email : 'john@doe.com',
+    id : 2
+}
+</code></pre>
+
+<p>];</p>
+
+<p>http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});</p>
+
+<p>```</p>
+
+<h1>Backbone App</h1>
+
+<p>Application checks for authentication first it initialises and assign the result into the session model. Each api request check for the user authentication as well and sends an error if user is not authenticated. Clearing the session and sending user to login is the result of api 401 errors. This way session model is always sync with server.</p>
+
+<h2>Session</h2>
+
+<p>In session model we keep all of our session data and login and logout functionality. Also I rewrite get, set and unset methods to use HTML5 sessionStorage if browser support it and if not, use the backbone model. The cool thing about sessionStorage is that it keep the session for you and if the session destroys, all data in it reset unlike localStorage that keep the data for you unless you delete them yourself.
+csrf variable is set using the jade template when application first send to client.
+Using the $.ajaxSetup we set this token to all of our future request headers.
+When user logout, server send a new CSRF token and assign it to global CSRF variable and run initialize again, so the new user don't need to refresh the page for login.
+And at the end we return an instance of model so we can require our session model in our router, views or anywhere we need it !!</p>
+
+<p>```js</p>
+
+<p>define([</p>
+
+<pre><code>'jquery',
+'backbone',
+'router'
+</code></pre>
+
+<p>], function($, Backbone, Router){</p>
+
+<pre><code>var SessionModel = Backbone.Model.extend({
+
+    url : '/session',
+
+    initialize : function(){
+        //Ajax Request Configuration
+        //To Set The CSRF Token To Request Header
+        $.ajaxSetup({
+            headers : {
+                'X-CSRF-Token' : csrf
+            }
+        });
+
+        //Check for sessionStorage support
+        if(Storage &amp;&amp; sessionStorage){
+            this.supportStorage = true;
+        }
+    },
+
+    get : function(key){
+        if(this.supportStorage){
+            var data = sessionStorage.getItem(key);
+            if(data &amp;&amp; data[0] === '{'){
+                return JSON.parse(data);
+            }else{
+                return data;
+            }
+        }else{
+            return Backbone.Model.prototype.get.call(this, key);
+        }
+    },
+
+
+    set : function(key, value){
+        if(this.supportStorage){
+            sessionStorage.setItem(key, value);
+        }else{
+            Backbone.Model.prototype.set.call(this, key, value);
+        }
+        return this;
+    },
+
+    unset : function(key){
+        if(this.supportStorage){
+            sessionStorage.removeItem(key);
+        }else{
+            Backbone.Model.prototype.unset.call(this, key);
+        }
+        return this;    
+    },
+
+    clear : function(){
+        if(this.supportStorage){
+            sessionStorage.clear();  
+        }else{
+            Backbone.Model.prototype.clear(this);
+        }
+    },
+
+    login : function(credentials){
+        var that = this;
+        var login = $.ajax({
+            url : this.url + '/login',
+            data : credentials,
+            type : 'POST'
+        });
+        login.done(function(response){
+            that.set('authenticated', true);
+            that.set('user', JSON.stringify(response.user));
+            if(that.get('redirectFrom')){
+                var path = that.get('redirectFrom');
+                that.unset('redirectFrom');
+                Backbone.history.navigate(path, { trigger : true });
+            }else{
+                Backbone.history.navigate('', { trigger : true });
+            }
+        });
+        login.fail(function(){
+            Backbone.history.navigate('login', { trigger : true });
+        });
+    },
+
+    logout : function(callback){
+        var that = this;
+        $.ajax({
+            url : this.url + '/logout',
+            type : 'DELETE'
+        }).done(function(response){
+            //Clear all session data
+            that.clear();
+            //Set the new csrf token to csrf vaiable and
+            //call initialize to update the $.ajaxSetup 
+            // with new csrf
+            csrf = response.csrf;
+            that.initialize();
+            callback();
+        });
+    },
+
+
+    getAuth : function(callback){
+        var that = this;
+        var Session = this.fetch();
+
+        Session.done(function(response){
+            that.set('authenticated', true);
+            that.set('user', JSON.stringify(response.user));
+        });
+
+        Session.fail(function(response){
+            response = JSON.parse(response.responseText);
+            that.clear();
+            csrf = response.csrf !== csrf ? response.csrf : csrf;
+            that.initialize();
+        });
+
+        Session.always(callback);
+    }
+});
+
+return new SessionModel();  
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h2>BaseRouter</h2>
+
+<p>Before writing the application router, we take a look at BaseRouter. BaseRouter has before and after methods and I rewrite the route method to call before and after methods before and after changing the route!
+Before has a next function as it's second argument, so when we want our application let the route handler to get executed, like node.js middlewares, we execute <code>next()</code>.</p>
+
+<p>``` js</p>
+
+<p>define([</p>
+
+<pre><code>'underscore',
+'backbone'
+</code></pre>
+
+<p>], function(_, Backbone){</p>
+
+<pre><code>var BaseRouter = Backbone.Router.extend({
+    before: function(){},
+    after: function(){},
+    route : function(route, name, callback){
+        if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+        if (_.isFunction(name)) {
+            callback = name;
+            name = '';
+        }
+        if (!callback) callback = this[name];
+
+        var router = this;
+
+        Backbone.history.route(route, function(fragment) {
+            var args = router._extractParameters(route, fragment);
+
+            var next = function(){
+                callback &amp;&amp; callback.apply(router, args);
+                router.trigger.apply(router, ['route:' + name].concat(args));
+                router.trigger('route', name, args);
+                Backbone.history.trigger('route', router, name, args);
+                router.after.apply(router, args);       
+            }
+            router.before.apply(router, [args, next]);
+        });
+        return this;
+    }
+});
+
+return BaseRouter;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h2>Router</h2>
+
+<p>Read the comments !!</p>
+
+<p>``` js</p>
+
+<p>define([</p>
+
+<pre><code>'jquery',
+'underscore',
+'backbone',
+'core/BaseRouter',
+'views/HomeView',
+'views/LoginView',
+'views/ProfileView',
+'models/UserModel',
+'Session'
+</code></pre>
+
+<p>], function($, _,  Backbone, BaseRouter, HomeView, LoginView, ProfileView, UserModel, Session){</p>
+
+<pre><code>var Router = BaseRouter.extend({
+
+    routes : {
+        'login' : 'showLogin',
+        'profile' : 'showProfile',
+        '*default' : 'showHome'
+    },
+
+    // Routes that need authentication and if user is not authenticated
+    // gets redirect to login page
+    requresAuth : ['#profile'],
+
+    // Routes that should not be accessible if user is authenticated
+    // for example, login, register, forgetpasword ...
+    preventAccessWhenAuth : ['#login'],
+
+    before : function(params, next){
+        //Checking if user is authenticated or not
+        //then check the path if the path requires authentication 
+        var isAuth = Session.get('authenticated');
+        var path = Backbone.history.location.hash;
+        var needAuth = _.contains(this.requresAuth, path);
+        var cancleAccess = _.contains(this.preventAccessWhenAuth, path);
+
+        if(needAuth &amp;&amp; !isAuth){
+            //If user gets redirect to login because wanted to access
+            // to a route that requires login, save the path in session
+            // to redirect the user back to path after successful login
+            Session.set('redirectFrom', path);
+            Backbone.history.navigate('login', { trigger : true });
+        }else if(isAuth &amp;&amp; cancleAccess){
+            //User is authenticated and tries to go to login, register ...
+            // so redirect the user to home page
+            Backbone.history.navigate('', { trigger : true });
+        }else{
+            //No problem, handle the route!!
+            return next();
+        }           
+    },
+
+    after : function(){
+        //empty
+    },
+
+    changeView : function(view){
+        //Close is a method in BaseView
+        //that check for childViews and 
+        //close them before closing the 
+        //parentView
+        function setView(view){
+            if(this.currentView){
+                this.currentView.close();
+            }
+            this.currentView = view;
+            $('.container').html(view.render().$el);
+        }
+
+        setView(view);
+    },
+
+    fetchError : function(error){
+        //If during fetching data from server, session expired
+        // and server send 401, call getAuth to get the new CSRF
+        // and reset the session settings and then redirect the user
+        // to login
+        if(error.status === 401){
+            Session.getAuth(function(){
+                Backbone.history.navigate('login', { trigger : true });
+            });
+        }
+    },
+
+    //... Route handlers …
+});
+
+return Router;
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>For a bit more specific route filtering we could use <a href="https://github.com/boazsender/backbone.routefilter">backbone.routefilter</a> as well !</p>
+
+<hr />
+
+<h1>Conclusion</h1>
+
+<p>Basiclly single page web applications security management is a bit different from server side traditional websites.
+In a typical application you can have these sitouations:</p>
+
+<ul>
+<li>Not authenticated and server the not restricted pages</li>
+<li>Not Authenticated and try accesing restricted page wich redirect you to login page</li>
+<li>Authenticated and don't have access to some pages like login, register, forgotpassowrd</li>
+<li>Authenticated !!!</li>
+<li>And leave application for a while and session expires which in a first api call to server, client get notified user is not in session anymore and redirect the user to login page</li>
+</ul>
+
+
+<p>I tried to add important futures that in a real application we might need them, into this sample application. Also I highly recommend that in production serve your application on HTTPS protocol !!</p>
+
+<p>You can get the source code from <a href="https://github.com/DanialK/advanced-security-in-backbone">GitHub</a>.</p>
+
+<p>I would love to hear from you and your suggestions, feel free to leave comment.</p>
+
+<p>If you enjoyed please share and fallow me on <a href="https://twitter.com/DaniaL_KH">twitter</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Filtering in BackboneJS and AngularJS]]></title>
+    <link href="http://DanialK.github.com/blog/2013/06/08/filtering-in-backbonejs-and-angularjs/"/>
+    <updated>2013-06-08T20:41:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/06/08/filtering-in-backbonejs-and-angularjs</id>
+    <content type="html"><![CDATA[<p>Hi everyone !!!</p>
+
+<p>I'm working on a backbone project at the moment . I have an collection of data and i wanted to filter through them. Using a bit of backbone code I inject this function to my application. This wasn't a pain at all. However after a bit of playing with AngularJS, I thought it would be cool to show you how filtering works both worlds!!</p>
+
+<!-- more -->
+
+
+<h2>BackboneJS:</h2>
+
+<p>First I add this method to my collection :</p>
+
+<p>``` js</p>
+
+<p>var MyCollection = Backbone.Collection.extend({</p>
+
+<pre><code>model: MyModel,
+
+search : function(letters){
+    if(letters == "") return this;
+    var pattern = new RegExp(letters,"gi");
+    return _(this.filter(function(data) {
+        return pattern.test(data.get("name"));
+    }));
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>using underscore filter method that baked into backbone collections I filter through this collection by using a simple regular expression and testing it with all models name!</p>
+
+<p>Now I have an searchItemView that I can use it's module everywhere in my application that i want to search though collection.</p>
+
+<p>``` js
+var searchItemView = Backbone.View.extend({</p>
+
+<pre><code>template:'&lt;label&gt;Search :&lt;/label&gt;'+'&lt;input type="text" id="searchItem" /&gt;',
+
+tagName: "form",
+
+events : {
+    'keyup #searchItem' : 'search'
+},
+
+initialize : function(options){
+    this.collection = options.collection;
+    this.parentView = options.parentView;
+},
+
+render: function () {
+    this.$el.html(this.template);
+    return this;
+},
+
+search : function(e){
+    var letters = $("#searchItem").val();
+    var filterd = this.collection.search(letters);
+    var parentView = this.parentView;
+    parentView.$('#items').empty();
+    filterd.each(function(item){
+        parentView.addOne(item);
+    });
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```
+I just pass the collection and parent view to it and it will filter my collection and re-render each model. It will empty the view and using addOne re-render filtered result. addOne method is a method in my parentView that render each item into collection view.</p>
+
+<p>That's it !!</p>
+
+<h2>AngularJS:</h2>
+
+<p>Now i'm going to show you a little magic of angular and it's directives !!
+I still love my backbone, but it's so cool :D !!!!</p>
+
+<p>It's all the code :</p>
+
+<p>``` js</p>
+
+<p><html ng-app>
+<head></p>
+
+<pre><code>&lt;script src="components/angular/angular.js"&gt;&lt;/script&gt;   
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>&lt;div ng-controller='Ctrl'&gt;
+    //search model
+    &lt;input type="text" ng-model='search'&gt;
+    &lt;ul&gt;
+        &lt;li ng-repeat='name in names | filter:search'&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+    function Ctrl ($scope) {
+        $scope.names = ['Danial','John','Jane'];
+    }
+&lt;/script&gt;
+</code></pre>
+
+<p></body>
+</html></p>
+
+<p>```</p>
+
+<p>All these html are there just to show you whats happening there but the magic is when we bind filter directive to search model<code>&lt;li ng-repeat='name in names | filter:search'&gt;&lt;/li&gt;</code>.</p>
+
+<p>Thats it !!!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Tips: After and Before Methods For Router]]></title>
+    <link href="http://DanialK.github.com/blog/2013/06/08/backbone-tips-after-and-before-methods-for-router/"/>
+    <updated>2013-06-08T01:04:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/06/08/backbone-tips-after-and-before-methods-for-router</id>
+    <content type="html"><![CDATA[<p>Hi everybody !!</p>
+
+<p>If you remember my last backbone tip, we added a method called <code>showView</code> and used it to render all of our views in each route !!</p>
+
+<p>Now we might want to do some operation before and after each route, so its nice to implement these two methods and by using a small hack make them called work !!
+``` js</p>
+
+<p>Backbone.Router.prototype.before = function () {};
+Backbone.Router.prototype.after = function () {};</p>
+
+<p>Backbone.Router.prototype.route = function (route, name, callback) {
+  if (!<em>.isRegExp(route)) route = this.</em>routeToRegExp(route);
+  if (_.isFunction(name)) {</p>
+
+<pre><code>callback = name;
+name = '';
+</code></pre>
+
+<p>  }
+  if (!callback) callback = this[name];</p>
+
+<p>  var router = this;</p>
+
+<p>  Backbone.history.route(route, function(fragment) {</p>
+
+<pre><code>var args = router._extractParameters(route, fragment);
+
+router.before.apply(router, arguments);
+callback &amp;&amp; callback.apply(router, args);
+router.after.apply(router, arguments);
+
+router.trigger.apply(router, ['route:' + name].concat(args));
+router.trigger('route', name, args);
+Backbone.history.trigger('route', router, name, args);
+</code></pre>
+
+<p>  });
+  return this;
+};</p>
+
+<p>```</p>
+
+<p>So by this two line code , this.before would be execute before actual route callback and this.after after it !</p>
+
+<p>So the router would be like this :
+``` js</p>
+
+<p>var Router = Backbone.Router.extend({</p>
+
+<pre><code>routes: {
+    '': function(){
+        console.log('INDEX ROUTE');
+    }
+},
+before: function () {
+    console.log('before');
+},
+after: function () {
+    console.log('after');
+},
+</code></pre>
+
+<p>});</p>
+
+<p>var router = new Router();</p>
+
+<p>Backbone.history.start();</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Tips - Managing Views and Memory Leaks]]></title>
+    <link href="http://DanialK.github.com/blog/2013/04/07/backbone-tips-managing-views-and-memory-leaks/"/>
+    <updated>2013-04-07T20:13:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/04/07/backbone-tips-managing-views-and-memory-leaks</id>
+    <content type="html"><![CDATA[<p>Hi everyone,</p>
+
+<p>As you may see in my previous post about backbone, I used a showView for rendering my views as well as keeping track of current view and closing it.
+One of the important things that you should consider in real world application is memory leaks. We always render the views and the next view comes and render it's html on previous view and we think it's gone. But it steel exist and it's listening for it's events and each new view that we render,takes our memory. So we need to somehow close our views before rendering the new one.</p>
+
+<p>What we are going to do it something like this :</p>
+
+<ol>
+<li>Adding close method to views prototype</li>
+<li>Adding onClose method to views that have child views for closing child views</li>
+<li>Adding showView to our router and using it</li>
+</ol>
+
+
+<!-- more -->
+
+
+<h3>Close Method :</h3>
+
+<p>Firstly somewhere in your code need to add close method. If you are using RequireJS for your project I think it's a good idea to require backbone in our main.js file and add it .</p>
+
+<p>``` js</p>
+
+<p>  Backbone.View.prototype.close = function() {</p>
+
+<pre><code>if (this.onClose) {
+  this.onClose();
+}
+this.remove();
+</code></pre>
+
+<p>  };</p>
+
+<p>```</p>
+
+<p>this code add close method to all your views and when it calls it check if view have innerViews to run onClose and get rid of them and then remove the view. remove method remove the view's element form DOM and by calling <code>this.stopListening()</code> unbinds all the events it's listening to.</p>
+
+<h3>onClose Method :</h3>
+
+<p>Now for the views that have child views, we need to push all of them to and array and make them ready to be closed when onClose called.</p>
+
+<p>``` js</p>
+
+<p>var ParentView = Backbone.View.extend({</p>
+
+<pre><code>initialize : function () {
+    this.childViews = [];
+},
+
+render : function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    /*
+    * adding our child views in childView array
+    */
+    this.childView1 = new ChildView;
+    this.childView2 = new ChildView;
+    this.childViews.push(this.childView1,this.childView2)
+},
+
+onClose : function(){
+    this.childViews.forEach(function (view){
+        view.close();
+    });
+    /*
+
+    _(this.childViews).each(function(view){
+        view.close();
+    });
+
+    */
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h3>Router's ShowView :</h3>
+
+<p>Now we can easily add a showView function inside our outer as a method and each time for creating an instance of our view and rendering it, use this function.
+It should be noted that you can add some route filtering for checking for authentication or etc. to our showView but it is a simple one.</p>
+
+<p>``` js</p>
+
+<p>var Router = Backbone.Router.extend({</p>
+
+<pre><code>routes: {
+    "*": "default",
+},
+
+showView: function (view) {
+    if (this.currentView) this.currentView.close();
+    $('.container').html(view.$el);
+    this.currentView = view;
+    return view;
+},
+
+default: function () {
+    /*
+    * Using showView
+    */
+    this.showView(new LoginView);  
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```
+So the showView, checks if there is any current view and if it is, it close it then render our view and assign the rendered view as app's currentView. At the end it returns the view that in more complex application you may need it !</p>
+
+<p>Note : for view rendering and use of <code>view.$el</code> instead of <code>view.render().el</code> read my <a href="http://danialk.github.io/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews/">previous backbone tip</a>.</p>
+
+<p>That's it.
+Hope it would be helpful.</p>
+
+<p>See ya !!!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Backbone Tips: Rendering Views and Their ChildViews]]></title>
+    <link href="http://DanialK.github.com/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews/"/>
+    <updated>2013-04-07T18:39:00+10:00</updated>
+    <id>http://DanialK.github.com/blog/2013/04/07/backbone-tips-rendering-views-and-their-childviews</id>
+    <content type="html"><![CDATA[<p>Hi everyone,
+It is about more than 1 month that I haven't post anything cause I was working on a backbone project and during this time I've learned some new tricks which you need to know them if you really want to write a real application.</p>
+
+<h4>First important thing is managing your childViews in parentView.</h4>
+
+<!-- more -->
+
+
+<p>There is couple of tricks that you can use
+for example render child view and then append it element to parent view's element :</p>
+
+<p>``` js
+...
+initialize : function(){</p>
+
+<pre><code>this.childView1 = new ChildView({});
+this.childView2 = new ChildView({});    
+</code></pre>
+
+<p>},
+render : function(){</p>
+
+<pre><code>this.$el.html(this.template());
+this.$el.append(this.childView1.render().el);
+this.$el.append(this.childView2.render().el);
+</code></pre>
+
+<p>}
+...
+```</p>
+
+<p>or even use setElement method :</p>
+
+<p>``` js
+...
+initialize : function(){</p>
+
+<pre><code>this.childView1 = new ChildView({});
+this.childView2 = new ChildView({});    
+</code></pre>
+
+<p>},
+render : function(){</p>
+
+<pre><code>this.$el.html(this.template());
+setElement
+this.childView1.setElement("#element1").render();
+this.childView2.setElement("#element2").render();
+</code></pre>
+
+<p>}
+...
+```</p>
+
+<h2>Problem :</h2>
+
+<p>But sometimes for you parent view you first need you model to be fetched and then render it and also maybe each of your child views need to wait for their model/collection to be fetched and then render their information in DOM.</p>
+
+<p>So then we can't use our <code>view.render().el</code> and append it to DOM in this kind of situations.</p>
+
+<p>Also you may have some route filtering functions in you router or maybe and showView function which remove the currentView form DOM and loads the new view for you( i'm going to talk about this in future posts) so you need one way for rendering all your views that should work for both views that need to wait for model to be fetched to render and the views that just need to render their simple template in to DOM.</p>
+
+<h2>Solution :</h2>
+
+<p>The simple solution that I learned form <a href="http://addyosmani.github.io/backbone-fundamentals">Backbone Fundamentals</a> and i'm going to expand it a little bit is that we append <code>views.$el</code> everywhere in our DOM or in our parent view's <code>$el</code> . Then anywhere inside out code we just need render the view to place it information into DOM.So inside the view we listen for model/collection to be fetched and when it happened it immediately render the view. Also should noted that using setElement ( <code>childView.setElemet('#someElement')</code>) for child views do something very similar to what we are doing here (<code>this.$('#someElement').html(this.childView.$el);</code>) but you cant assign className and tagName.</p>
+
+<p>``` js</p>
+
+<p>var ParentView = Backbone.View.extend({</p>
+
+<pre><code>initialize : function () {
+    this.listenTo(this.model, 'sync', this.render);
+},
+
+render : function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    this.$('#someElement').html(this.childView.$el);
+    /*
+    * this.$el.append(this.childView.$el);
+    */
+    var someModel = new Model;
+    this.childView = new ChildView({ model : someModel });
+    someModel.fetch();
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var ChildView = Backbone.View.extend({</p>
+
+<pre><code>initialize : function(){
+    this.listenTo(this.model, 'sync', this.render);
+},
+
+render : function(){
+    this.$el.html(this.template(this.model.toJSON()));
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>And for the views that were work fine with <code>view.render().el</code> now you have to insert <code>this.render()</code> in their <code>initialize</code> method. There are couple of ways for taking care of this views, for example returning the view in showView function and then something like this <code>showView(new SubView).render()</code> but putting rendering it in initialize is better I think.</p>
+
+<p>At end something like this can be our showView function in our router:</p>
+
+<p>``` js
+. . .</p>
+
+<p>showView: function (view) {</p>
+
+<pre><code>/*
+* I'm going talk more about first two lines in future post
+*/
+if (this.currentView) this.currentView.close();
+this.currentView = view;
+$('#page').html(view.$el);
+return view;
+</code></pre>
+
+<p>},</p>
+
+<p>. . .</p>
+
+<p>```</p>
+
+<p>That's it.
+Hope it would be helpful.</p>
+
+<p>See ya !!!</p>
+]]></content>
+  </entry>
+  
+</feed>

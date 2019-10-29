@@ -1,1 +1,794 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Danial Khosravi's Blog</title>
+  <meta name="author" content="Danial Khosravi">
+
+  
+  <meta name="description" content="I got introduced to Functional Programming over 3 years ago and little by little, I ended up accumulating new ideas and ways of thinking that made me &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DanialK.github.com/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Danial Khosravi's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+    window.onload = function () {
+        var containerId = "subtitle";
+        var subtitle = document.getElementById(containerId);
+        var texts = [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Statistics",
+            "Web Development",
+            "Functional Programming",
+            subtitle.innerHTML, // "Entrepreneur in the making...",
+        ];
+
+        function simulateType(textIndex) {
+            subtitle.innerHTML = "";
+            var text = texts[textIndex];
+
+            var time = 200;
+            for (var i = 0; i < text.length; i++) {
+                (function (char) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML + char;
+                    }, time + i * time);
+                })(text[i]);
+            }
+
+            setTimeout(function () {
+                var nextIndex = textIndex + 1;
+                simulateBackslash(nextIndex === texts.length ? 0 : nextIndex);
+            }, time * text.length + 1500);
+        }
+
+        function simulateBackslash(textIndex) {
+            var text = subtitle.innerHTML
+            var time = 50;
+
+            for (var i = text.length - 1; i >= 0; i--) {
+                (function (index) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML.substring(0, index);
+                    }, time + (text.length - i) * time);
+                })(i);
+            }
+
+            setTimeout(function () {
+                simulateType(textIndex);
+            }, 2000);
+        }
+        simulateBackslash(0);
+    }
+</script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-26114012-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Danial Khosravi's Blog</a></h1>
+  
+    <h2 id='subtitle' style="height: 27px;"> Entrepreneur in the making... </h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DanialK.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2019/10/29/functional-programming-in-csharp/">Functional Programming in C#</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-10-29T14:16:00+11:00" pubdate data-updated="true">Oct 29<span>th</span>, 2019</time>
+        
+         | <a href="/blog/2019/10/29/functional-programming-in-csharp/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I got introduced to Functional Programming over 3 years ago and little by little, I ended up accumulating new ideas and ways of thinking that made me feel more confident at problem solving stage of coding. Functional Programming enabled me to have multiple options for solving a problem at hand.</p>
+
+<p>Functional programming gave me a set of tools and a common way of thinking for solving literally any problem, async or sync, which allowed me to simplify every problem into smaller chunks and build my program by composing those chunks.</p>
+
+<p>And every new language I learnt, functional or not, I kept applying these techniques or ways of thinking. Every new concept, higher order function, functional data structure or effect that I learnt, say in Haskell or Scala or even C#/TypeScript, was immediately ready for problem solving in other languages I knew, just had to find the right syntax or library that had those functional data structures to be able to work.</p>
+
+<p>At my current job, the .NET stack is used for backend application development, React/TypeScript is used for Frontend and Scala/Spark for Big Data. As engineers, we are a practical bunch and a good few people have showed interest in learning more about Functional Programming.</p>
+
+<p>After certain failed attempts/lack of support for trying to bring FP to our application development stack through the use of F# or trying to teach FP concepts using Haskell, I decided to delve deeper into doing FP in C# and create practical examples that can be beneficial to everyone in their current application without needing to &#8220;rewrite&#8221; the whole thing in a language they are comfortable with.</p>
+
+<p><a href="https://github.com/DanialK/fp-in-csharp"><strong>Functional Programming in C#</strong></a>, is the result of the talks I gave at my company and have managed to receive some good feedback from my peers, I hope these examples can be useful to others too.</p>
+
+<h5>You can find all the code and slides on here on github <a href="https://github.com/DanialK/fp-in-csharp"><strong>https://github.com/DanialK/fp-in-csharp</strong></a></h5>
+
+<h3>Resources</h3>
+
+<ul>
+<li><a href="https://github.com/louthy/language-ext">language-ext</a> - C# functional language extensions - a base class library for functional programming</li>
+<li><a href="https://www.manning.com/books/functional-programming-in-c-sharp">Functional Programming in C#</a> book by Enrico Buonanno</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/">Shipping Deep Learning Models in Web and Mobile Applications</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-06-23T23:16:00+10:00" pubdate data-updated="true">Jun 23<span>rd</span>, 2018</time>
+        
+         | <a href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>Web Application (running in your browser!)</h3>
+
+<p><link rel="stylesheet" type="text/css" href="/stylesheets/custom/livesentiment/livesentiment_post.css"></p>
+
+<div id="livesentimentIframeHolder">
+    <button id="liveSentimentStart">Start</button>
+</div>
+
+
+
+
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event) { 
+    $('#liveSentimentStart').on("click", function() {
+        if(!$('#livesentimentIframe').length) {
+            $('#livesentimentIframeHolder').html('<iframe id="livesentimentIframe" src="/javascripts/custom/livesentiment/index.html"></iframe>');
+        }
+    }); 
+});
+</script>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+<h3>IOS Application</h3>
+
+<div style="display: flex;justify-content: center;align-items: center;">
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Weekend project. Will be open sourced soonish !! <a href="https://twitter.com/hashtag/Sentimentanalysis?src=hash&amp;ref_src=twsrc%5Etfw">#Sentimentanalysis</a> <a href="https://twitter.com/hashtag/DeepLearning?src=hash&amp;ref_src=twsrc%5Etfw">#DeepLearning</a> <a href="https://twitter.com/hashtag/ReactNative?src=hash&amp;ref_src=twsrc%5Etfw">#ReactNative</a> <a href="https://twitter.com/hashtag/MachineLearning?src=hash&amp;ref_src=twsrc%5Etfw">#MachineLearning</a> <a href="https://twitter.com/hashtag/NLP?src=hash&amp;ref_src=twsrc%5Etfw">#NLP</a> <a href="https://t.co/EyECl7waNF">pic.twitter.com/EyECl7waNF</a></p>&mdash; Danial (@DaniaL_KH) <a href="https://twitter.com/DaniaL_KH/status/975196959450447872?ref_src=twsrc%5Etfw">March 18, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+
+<p> <a href="https://github.com/DanialK/livesentiment"><strong>Source Code</strong></a></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/">Range of Convolutional Neural Networks on Fashion-MNIST Dataset</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-09-29T03:57:00+10:00" pubdate data-updated="true">Sep 29<span>th</span>, 2017</time>
+        
+         | <a href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Fashion MNIST is a drop-in replacement for the very well known, machine learning hello world, MNIST dataset. It has same number of training and test examples and the images have the same 28x28 size and there are a total of 10 classes/labels, you can read more about the dataset here : <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion-MNIST</a></p>
+
+<p>In this post we will be trying out different models and compare their results:</p>
+
+<h2>List of models</h2>
+
+<ol>
+<li>2 Layer Neural Netwoek</li>
+<li>CNN with 1 Convolutional Layer</li>
+<li>CNN with 3 Convolutional Layers</li>
+<li>VGG Like Model</li>
+<li>VGG Like Model With Batchnorm</li>
+</ol>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2017/09/27/deep-learning-pc-build/">Deep Learning PC Build</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-09-27T12:59:00+10:00" pubdate data-updated="true">Sep 27<span>th</span>, 2017</time>
+        
+         | <a href="/blog/2017/09/27/deep-learning-pc-build/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><div style="text-align: center;">
+  <a
+    href='https://www.evernote.com/l/APNLeieemqNHZZbagh2ro-HYv7eHJ9DhyoM'
+    style="text-align: center; font-weight: bold; color: rebeccapurple; text-decoration: none"
+  >
+    Click here to see all the photos
+  </a>
+</div>
+
+
+<p><a href='https://www.evernote.com/l/APNLeieemqNHZZbagh2ro-HYv7eHJ9DhyoM'><img width="100%" src='/images/pc_build_photos/1.jpg' /></a></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2017/09/27/deep-learning-pc-build/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/">Estimating Pi Using Monte Carlo Simulations</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-11-28T23:32:00+11:00" pubdate data-updated="true">Nov 28<span>th</span>, 2016</time>
+        
+         | <a href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Pi (3.141593) is one of the few magical numbers in Mathematics that we often trust, accept and use in our calculations. However, you might be curious to know where it comes from. Pi can be obtained analytically which gives us a value equal to 3.141593 but here we&#8217;re going to find the value of pi numerically by running <a href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Monte Carlo simulations</a>.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/01/15/sudoku-written-using-es6-react-redux/">Sudoku Written Using ES6 React and Redux</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-01-15T02:17:00+11:00" pubdate data-updated="true">Jan 15<span>th</span>, 2016</time>
+        
+         | <a href="/blog/2016/01/15/sudoku-written-using-es6-react-redux/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><link rel="stylesheet" type="text/css" href="/stylesheets/custom/react_redux_sudoku.css"></p>
+
+<div id='root'></div>
+
+
+<script src="/javascripts/custom/react_redux_sudoku.js"></script>
+
+
+<h4><a href="https://github.com/DanialK/react-redux-sudoku">Source Code</a></h4>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/01/15/sudoku-written-using-es6-react-redux/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/12/19/calculating-stocks-beta-using-r/">Calculating Stocks&#8217; Beta Using R</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-19T20:13:00+11:00" pubdate data-updated="true">Dec 19<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/12/19/calculating-stocks-beta-using-r/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>According to <a href="http://www.investopedia.com/terms/b/beta.asp">Investopedia</a>, Beta is a measure of the volatility, or systematic risk, of a security or a portfolio in comparison to the market as a whole. In this post, we&#8217;re going to learn how to calculate beta coefficient of our desired stocks using historical price data that is publicly available.</p>
+
+<p>Below we will be covering</p>
+
+<ul>
+<li>R script to calculate beta for Goldman Sachs</li>
+<li>Maths behind the beta coefficient</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/12/19/calculating-stocks-beta-using-r/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/12/17/r-fancy-plots-using-ggplot2-and-ggthemes/">R: Fancy Plots Using Ggplot2 and Ggthemes</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-17T15:43:00+11:00" pubdate data-updated="true">Dec 17<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/12/17/r-fancy-plots-using-ggplot2-and-ggthemes/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In this post I want to introduce you to a great ggplot2 add-on, ggthemes.
+ggthemes which is freely available on <a href="https://github.com/jrnold/ggthemes">github</a>, let you turn your current plots to professional looking plots in a matter of a couple of lines of code.</p>
+
+<p>ggthemes has various of different themes such as <code>The Economist</code>, <code>Excel</code> and various other professional themes that makes your current plots much fancier.</p>
+
+<p>Here is a plot that I made for one of my assignments this year using this library.
+<img src="/images/ggthemes_tutorial.png"></p>
+
+<p>Check out more examples on its offical <a href="https://github.com/jrnold/ggthemes">Github Repo</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/12/17/talk-slides-isomorphic-javascript/">Talk Slides: Isomorphic JavaScript What? Why? How?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-17T15:09:00+11:00" pubdate data-updated="true">Dec 17<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/12/17/talk-slides-isomorphic-javascript/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><script async class="speakerdeck-embed" data-id="9b21278e27b745d5a01c57c7372ff215" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/12/17/talk-slides-isomorphic-javascript/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/12/13/multiline-plots-in-r-using-ggplot2/">Multiline Plots in R Using Ggplot2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-13T15:04:00+11:00" pubdate data-updated="true">Dec 13<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/12/13/multiline-plots-in-r-using-ggplot2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img src="/images/multiple-line-graph-r.png"></p>
+
+<p>With the help of ggplot2, creating beautiful charts is an easy task in R. However it can get a little bit tricky when you&#8217;re trying to plot a set of data on a single chart, over a shared x axis.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/12/13/multiline-plots-in-r-using-ggplot2/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2019/10/29/functional-programming-in-csharp/">Functional Programming in C#</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/">Shipping Deep Learning Models in Web and Mobile Applications</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/29/range-of-convolutional-neural-networks-on-fashion-mnist-dataset/">Range of Convolutional Neural Networks on Fashion-MNIST dataset</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/09/27/deep-learning-pc-build/">Deep Learning PC Build</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/28/estimating-pi-using-monte-carlo-simulations/">Estimating Pi Using Monte Carlo Simulations</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/DanialK">@DanialK</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'DanialK',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("DaniaL_KH", 5, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/DaniaL_KH" class="twitter-follow-button" data-show-count="false">Follow @DaniaL_KH</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - Danial Khosravi -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'danialk';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

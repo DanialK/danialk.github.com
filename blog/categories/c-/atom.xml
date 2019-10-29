@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: C# | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/c-/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Functional Programming in C#]]></title>
+    <link href="http://DanialK.github.com/blog/2019/10/29/functional-programming-in-csharp/"/>
+    <updated>2019-10-29T14:16:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2019/10/29/functional-programming-in-csharp</id>
+    <content type="html"><![CDATA[<p>I got introduced to Functional Programming over 3 years ago and little by little, I ended up accumulating new ideas and ways of thinking that made me feel more confident at problem solving stage of coding. Functional Programming enabled me to have multiple options for solving a problem at hand.</p>
+
+<p>Functional programming gave me a set of tools and a common way of thinking for solving literally any problem, async or sync, which allowed me to simplify every problem into smaller chunks and build my program by composing those chunks.</p>
+
+<p>And every new language I learnt, functional or not, I kept applying these techniques or ways of thinking. Every new concept, higher order function, functional data structure or effect that I learnt, say in Haskell or Scala or even C#/TypeScript, was immediately ready for problem solving in other languages I knew, just had to find the right syntax or library that had those functional data structures to be able to work.</p>
+
+<p>At my current job, the .NET stack is used for backend application development, React/TypeScript is used for Frontend and Scala/Spark for Big Data. As engineers, we are a practical bunch and a good few people have showed interest in learning more about Functional Programming.</p>
+
+<p>After certain failed attempts/lack of support for trying to bring FP to our application development stack through the use of F# or trying to teach FP concepts using Haskell, I decided to delve deeper into doing FP in C# and create practical examples that can be beneficial to everyone in their current application without needing to "rewrite" the whole thing in a language they are comfortable with.</p>
+
+<p><a href="https://github.com/DanialK/fp-in-csharp"><strong>Functional Programming in C#</strong></a>, is the result of the talks I gave at my company and have managed to receive some good feedback from my peers, I hope these examples can be useful to others too.</p>
+
+<h5>You can find all the code and slides on here on github <a href="https://github.com/DanialK/fp-in-csharp"><strong>https://github.com/DanialK/fp-in-csharp</strong></a></h5>
+
+<h3>Resources</h3>
+
+<ul>
+<li><a href="https://github.com/louthy/language-ext">language-ext</a> - C# functional language extensions - a base class library for functional programming</li>
+<li><a href="https://www.manning.com/books/functional-programming-in-c-sharp">Functional Programming in C#</a> book by Enrico Buonanno</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ggplot2 | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/ggplot2/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[R: Fancy plots using ggplot2 and ggthemes]]></title>
+    <link href="http://DanialK.github.com/blog/2015/12/17/r-fancy-plots-using-ggplot2-and-ggthemes/"/>
+    <updated>2015-12-17T15:43:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2015/12/17/r-fancy-plots-using-ggplot2-and-ggthemes</id>
+    <content type="html"><![CDATA[<p>In this post I want to introduce you to a great ggplot2 add-on, ggthemes.
+ggthemes which is freely available on <a href="https://github.com/jrnold/ggthemes">github</a>, let you turn your current plots to professional looking plots in a matter of a couple of lines of code.</p>
+
+<p>ggthemes has various of different themes such as <code>The Economist</code>, <code>Excel</code> and various other professional themes that makes your current plots much fancier.</p>
+
+<p>Here is a plot that I made for one of my assignments this year using this library.
+<img src="/images/ggthemes_tutorial.png"></p>
+
+<p>Check out more examples on its offical <a href="https://github.com/jrnold/ggthemes">Github Repo</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Multiline plots in R using ggplot2]]></title>
+    <link href="http://DanialK.github.com/blog/2015/12/13/multiline-plots-in-r-using-ggplot2/"/>
+    <updated>2015-12-13T15:04:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2015/12/13/multiline-plots-in-r-using-ggplot2</id>
+    <content type="html"><![CDATA[<p><img src="/images/multiple-line-graph-r.png"></p>
+
+<p>With the help of ggplot2, creating beautiful charts is an easy task in R. However it can get a little bit tricky when you're trying to plot a set of data on a single chart, over a shared x axis.</p>
+
+<!-- more -->
+
+
+<p>A neat trick is using the library <code>reshape2</code> which is a very useful data manipulation library for R.
+With the help of <code>melt</code> function of this library, we can combine our data into a single data frame in the format that ggplot2 wants from us in order to draw different lines over the same axis.</p>
+
+<p>In this example, in data.csv I have function values of y=x, y=x<sup>2</sup> and y=x<sup>3</sup> for x values from 1 to 10 and i'm trying to draw these 3 charts on the same axis.</p>
+
+<p>Note: if you haven't installed <code>ggplot2</code> and <code>reshape2</code> make sure to run
+<code>
+install.packages("ggplot2")
+</code> and
+<code>
+install.packages("reshape2")
+</code></p>
+
+<p>``` js script.R https://github.com/DanialK/multiple-line-graph-r/blob/master/script.R
+library(ggplot2)
+library(reshape2)</p>
+
+<p>data &lt;- read.csv('./data.csv')</p>
+
+<p>chart_data &lt;- melt(data, id='x')
+names(chart_data) &lt;- c('x', 'func', 'value')</p>
+
+<p>ggplot() +
+  geom_line(data = chart_data, aes(x = x, y = value, color = func), size = 1)+
+  xlab("x axis") +
+  ylab("y axis")</p>
+
+<p>```</p>
+
+<p>You can find the source code <a href="https://github.com/DanialK/multiple-line-graph-r">here on github</a></p>
+]]></content>
+  </entry>
+  
+</feed>

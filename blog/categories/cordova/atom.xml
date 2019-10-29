@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Cordova | Danial Khosravi's Blog]]></title>
+  <link href="http://DanialK.github.com/blog/categories/cordova/atom.xml" rel="self"/>
+  <link href="http://DanialK.github.com/"/>
+  <updated>2019-10-29T21:31:14+11:00</updated>
+  <id>http://DanialK.github.com/</id>
+  <author>
+    <name><![CDATA[Danial Khosravi]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cordova/PhoneGap Tutorial]]></title>
+    <link href="http://DanialK.github.com/blog/2014/01/09/cordova-slash-phonegap-tutorial/"/>
+    <updated>2014-01-09T11:56:00+11:00</updated>
+    <id>http://DanialK.github.com/blog/2014/01/09/cordova-slash-phonegap-tutorial</id>
+    <content type="html"><![CDATA[<p>If you are a web app developer and you care about mobile, you definitely heard of <a href="http://phonegap.com/">PhoneGap</a></p>
+
+<blockquote><p>PhoneGap is a free and open source framework that allows you to create mobile apps using standardized web APIs for the platforms you care about.</p></blockquote>
+
+<h4>Before we ger started let me clarify that <a href="http://phonegap.com/">PhoneGap</a> and <a href="http://cordova.apache.org/">Cordova</a> are same thing so don't get confused !!!</h4>
+
+<p>I needed a small app to play with phonegap and last time I wrote the <a href="http://danialk.github.io/blog/2013/12/17/angularjs-note-application/">simple note application</a> in AngularJS immediately I start converting it to a phonegap application, which wasn't that hard.</p>
+
+<!-- more -->
+
+
+<h3>Preparing Cordova</h3>
+
+<p>First you need to install Cordova CLI, you can do this by running</p>
+
+<p><code>
+$ npm install crodova -g
+</code></p>
+
+<p>Now that you have Cordova installed, go to your project folder and run this</p>
+
+<p><code>
+$ cordova create cordova-app com.my.app MyAPP
+</code></p>
+
+<p>and then go into cordova-app folder</p>
+
+<p><code>
+$ cd cordova-app
+</code></p>
+
+<p>Now all you need to do is to add the platforms that you want to make you application for !! Keep that in mind you need their SDKs instilled !!</p>
+
+<p><code>
+  $ cordova platform add ios
+</code></p>
+
+<h3>Application Source</h3>
+
+<p>Now we are ready to work on our source code which should be inside the <code>www</code> folder inside your cordova-app folder !!!</p>
+
+<p>The source code is almost the same as the webapp version that I put in my last blog post, except a few changes that i'm going to explain now !!</p>
+
+<p>Very first change it that we have to include Cordova library in our main html file.</p>
+
+<p>```</p>
+
+<script src="cordova.js"></script>
+
+
+<p>
+```</p>
+
+<p>For every Cordova app we need one main script file to listen to <code>deviceready</code> event and initialise our application and our plugins !!
+After release of IOS7 and PhoneGap 3 your application uses the whole screen which means the app starts from top of the screen that means you need to shift it down 20px if you want to have status bar while your application is running or otherwise you have to hide the statusbar!! There are a lot of ways to fix this problem but the easiest one is to install status bar plugin :</p>
+
+<p><code>
+$ cordova plugin add  org.apache.cordova.statusbar
+</code></p>
+
+<p>and then we have to run this code in our main.js file :</p>
+
+<p>``` js</p>
+
+<p>function onDeviceReady() {</p>
+
+<pre><code>StatusBar.overlaysWebView(false);
+</code></pre>
+
+<p>}</p>
+
+<p>document.addEventListener('deviceready', onDeviceReady, false);</p>
+
+<p>```</p>
+
+<p>For more information about this plugin go <a href="https://github.com/jonathannaguin/org.apache.cordova.statusbar">here</a> !!</p>
+
+<h3>Build process and testing</h3>
+
+<p>When everything finished all you need to do is to run build command which you can specify your desired platform !!</p>
+
+<p><code>
+$ cordova build ios
+</code></p>
+
+<p>You app is ready now !! Now you can open the Xcode project file inside the platforms/ios folder and play with it using the iOS simulator.</p>
+
+<p>A small tip if you are developing for iOS, you can install ios-sim using homebrew and then you can run this which directly runs your application inside the simulator !!</p>
+
+<p><code>
+$ brew install ios-sim
+</code></p>
+
+<p><code>
+$ cordova emulate ios
+</code></p>
+
+<h3>Conclusion</h3>
+
+<p>This is simple app that helped me get my hands around phonegap, and hopefully was useful for you as well !!</p>
+
+<p>You can get the source code from <a href="https://github.com/DanialK/cordova-note-app">HERE</a> !!</p>
+]]></content>
+  </entry>
+  
+</feed>
