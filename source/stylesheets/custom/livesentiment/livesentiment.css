@@ -1,6 +1,0 @@
-/*
-    diff
-    padding-top:50px;
-    height:500px
-*/
-body{font-family:sans-serif;width:100wh;height:500px;color:#fff;background:linear-gradient(-45deg,#8b53f3,#673ab7,#7b1fa2,#a0f);background-size:500% 500%;animation:_Gradient_1a6k6_1 10s ease infinite}@keyframes _Gradient_1a6k6_1{0%{background-position:0 50%}50%{background-position:100% 50%}to{background-position:0 50%}}h1,h6{font-family:Open Sans;font-weight:300;text-align:center;position:absolute;top:45%;right:0;left:0}._text_input_1a6k6_45{background:transparent;resize:none;border:none;overflow:auto;outline:none;box-shadow:none;height:500px;font-size:72px;color:#fff;padding-top:50px;width:100%}._text_input_1a6k6_45::-webkit-input-placeholder{color:#fff;opacity:.5}._text_input_1a6k6_45:-moz-placeholder,._text_input_1a6k6_45::-moz-placeholder{color:#fff;opacity:.5}._text_input_1a6k6_45:-ms-input-placeholder{color:#fff;opacity:.5}._container_1a6k6_74{display:flex;justify-content:center;align-items:center;flex-direction:column}
