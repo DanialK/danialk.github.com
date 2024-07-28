@@ -1,7 +1,6 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
 import { writeFileSync } from 'fs'
 import readingTime from 'reading-time'
-import { slug } from 'github-slugger'
 import path from 'path'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 // Remark packages
@@ -23,9 +22,14 @@ import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
+import { addRawDocumentToVFile, MDXOptions } from 'contentlayer2/core'
+import * as mdxBundler from 'mdx-bundler'
+import slug from './lib/slug'
+import rss from './scripts/rss'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
+const snippetSeperator = '{/* <!-- more --> */}'
 
 // heroicon mini link
 const icon = fromHtmlIsomorphic(
@@ -40,15 +44,57 @@ const icon = fromHtmlIsomorphic(
   { fragment: true }
 )
 
+const defaultMdxOptions: MDXOptions = {
+  cwd: process.cwd(),
+  remarkPlugins: [
+    remarkExtractFrontmatter,
+    remarkGfm,
+    remarkCodeTitles,
+    remarkMath,
+    remarkImgToJsx,
+    remarkAlert,
+  ],
+  rehypePlugins: [
+    rehypeSlug,
+    [
+      rehypeAutolinkHeadings,
+      {
+        behavior: 'prepend',
+        headingProperties: {
+          className: ['content-header'],
+        },
+        content: icon,
+      },
+    ],
+    rehypeKatex,
+    [rehypeCitation, { path: path.join(root, 'data') }],
+    [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
+    rehypePresetMinify,
+  ],
+}
+
+const computeSlug = (flattenedPath: string) => {
+  const slug = flattenedPath.replace(/^.+?(\/)/, '')
+  const regex = /^(\d{4})-(\d{2})-(\d{2})-(.+)$/
+  const match = slug.match(regex)
+  if (match) {
+    const [, year, month, date, rest] = match
+    return [year, month, date, decodeURI(rest)].join('/')
+  } else {
+    return slug
+  }
+}
+
 const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
+    resolve: (doc) => computeSlug(doc._raw.flattenedPath),
   },
   path: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath,
+    // NOTE: start with / so it's considered internal link by Link
+    resolve: (doc) => `/blog/${computeSlug(doc._raw.flattenedPath)}`,
   },
   filePath: {
     type: 'string',
@@ -60,7 +106,7 @@ const computedFields: ComputedFields = {
 /**
  * Count the occurrences of all tags across blog posts and write to json file
  */
-function createTagCount(allBlogs) {
+function createTagCount(allBlogs): Record<string, number> {
   const tagCount: Record<string, number> = {}
   allBlogs.forEach((file) => {
     if (file.tags && (!isProduction || file.draft !== true)) {
@@ -75,6 +121,7 @@ function createTagCount(allBlogs) {
     }
   })
   writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
+  return tagCount
 }
 
 function createSearchIndex(allBlogs) {
@@ -84,7 +131,14 @@ function createSearchIndex(allBlogs) {
   ) {
     writeFileSync(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+      JSON.stringify(
+        allCoreContent(
+          // Remove the / forward slash so kbar search works as expected
+          sortPosts(
+            allBlogs.map((b) => ({ ...b, path: b.path[0] === '/' ? b.path.substr(1) : b.path }))
+          )
+        )
+      )
     )
     console.log('Local search index generated...')
   }
@@ -122,6 +176,46 @@ export const Blog = defineDocumentType(() => ({
         url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
       }),
     },
+    snippet: {
+      type: 'string',
+      resolve: async (doc) => {
+        if (!doc.body.raw.includes(snippetSeperator)) {
+          return null
+        }
+
+        const mdxString = doc.body.raw.split(snippetSeperator)[0]
+
+        const rawDocumentData = doc._raw
+        const {
+          rehypePlugins,
+          remarkPlugins,
+          mdxOptions: mapMdxOptions,
+          esbuildOptions: mapEsbuildOptions,
+          ...restOptions
+        } = defaultMdxOptions
+
+        const mdxOptions = {
+          mdxOptions: (opts) => {
+            opts.rehypePlugins = [...(opts.rehypePlugins ?? []), ...(rehypePlugins ?? [])]
+            opts.remarkPlugins = [
+              addRawDocumentToVFile(rawDocumentData),
+              ...(opts.remarkPlugins ?? []),
+              ...(remarkPlugins ?? []),
+            ]
+            return mapMdxOptions ? mapMdxOptions(opts) : opts
+          },
+          esbuildOptions: (opts, frontmatter) => {
+            // NOTE this is needed to avoid `esbuild` from logging a warning regarding the `tsconfig.json` target option not being used
+            opts.target = 'es2020'
+            return mapEsbuildOptions ? mapEsbuildOptions(opts, frontmatter) : opts
+          },
+          // NOTE `restOptions` should be spread at the end to allow for user overrides
+          ...restOptions,
+        }
+
+        return mdxBundler.bundleMDX({ source: mdxString, ...mdxOptions }).then((res) => res.code)
+      },
+    },
   },
 }))
 
@@ -146,37 +240,11 @@ export const Authors = defineDocumentType(() => ({
 export default makeSource({
   contentDirPath: 'data',
   documentTypes: [Blog, Authors],
-  mdx: {
-    cwd: process.cwd(),
-    remarkPlugins: [
-      remarkExtractFrontmatter,
-      remarkGfm,
-      remarkCodeTitles,
-      remarkMath,
-      remarkImgToJsx,
-      remarkAlert,
-    ],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'prepend',
-          headingProperties: {
-            className: ['content-header'],
-          },
-          content: icon,
-        },
-      ],
-      rehypeKatex,
-      [rehypeCitation, { path: path.join(root, 'data') }],
-      [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
-      rehypePresetMinify,
-    ],
-  },
+  mdx: defaultMdxOptions,
   onSuccess: async (importData) => {
     const { allBlogs } = await importData()
-    createTagCount(allBlogs)
+    const tagCount = createTagCount(allBlogs)
     createSearchIndex(allBlogs)
+    rss(allBlogs, tagCount)
   },
 })

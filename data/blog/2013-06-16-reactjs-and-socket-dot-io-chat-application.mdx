@@ -1,0 +1,293 @@
+---
+layout: PostLayout
+title: 'ReactJS and Socket.IO Chat Application'
+date: 2013-06-16 19:52
+tags:
+  - ReactJS
+  - Socket.IO
+---
+
+## Updated(13/7/2015)
+
+A week ago I was playing with AngularJS and [this](https://github.com/btford/angular-socket-io-im) little chat application which uses socket.io and nodejs for realtime communication.
+Yesterday I saw a post about [ReactJS](http://facebook.github.io/react) in EchoJS and started playing with this UI library. After playing a bit with React, I decided to write and chat application using React and I used [Bran Ford's Backend](https://github.com/btford/angular-socket-io-im) for server side of this little app.
+
+{/* <!-- more --> */}
+
+#### Note About Server
+
+It's the same backend used [this](https://github.com/btford/angular-socket-io-im) but with a bit of clean up.
+When you connect to server it give you a name like "Guest1" and you can change it. Changing Name broadcast a 'change:name' event to all other users. Also sending message broadcast 'send:message' event to others. Also it inform others when a user disconnect or connect.
+
+## ReactJS Introduction :
+
+First I suggest you to take a look at tutorial page in react's website.
+
+Like what website says, React components implement a render() method that takes input data and returns what to display. A cool thing about React is that you can write your html inside your javascript(I know we always try not to do so, but it's a bit different here). They call this XML like syntax [JSX](http://facebook.github.io/react/docs/syntax.html).
+
+React is not very complicated. You only need to understand components lifecycles and difference of props and state. In JSX for passing your (model) data to your components, you pass them like html attributes, and you can use them inside the component through this.props !!
+States are a pieces of data inside your UI that you can change them and set them back and class's render method will take care of rendering them !!
+Also for the people that have Backbone background, React's components are like backbone views. It doesn't mean that it replace the backbone view, but they have their own use cases which i'm sure after playing with react you'll get it !!
+
+Again suggest to check the website docs and then jump back here, it's cool !!!
+
+## Lets Begin
+
+Application Components Structure is like this :
+
+```
+	- ChatApp
+		- UserList
+		- MessageList
+			-Message
+		- MessageForm
+		- ChangeNameForm
+
+```
+
+#### UserList:
+
+Inside this component I have and renderUser function which return a html with the data that we pass to it !
+Render function return the li tag for each of the users, that we want to pass to this component.
+
+```js
+var UsersList = React.createClass({
+  render() {
+    return (
+      <div className="users">
+        <h3> Online Users </h3>
+        <ul>
+          {this.props.users.map((user, i) => {
+            return <li key={i}>{user}</li>
+          })}
+        </ul>
+      </div>
+    )
+  },
+})
+```
+
+#### Message And MessageList:
+
+Message class's job is just to render a single message and it is so straight forward.
+
+```js
+var Message = React.createClass({
+  render() {
+    return (
+      <div className="message">
+        <strong>{this.props.user} :</strong>
+        <span>{this.props.text}</span>
+      </div>
+    )
+  },
+})
+```
+
+The cool part of react starts when you use these components like and html tag inside another, which in this case our message list contains a function to render each message inside it's div.
+
+```js
+var MessageList = React.createClass({
+  render() {
+    return (
+      <div className="messages">
+        <h2> Conversation: </h2>
+        {this.props.messages.map((message, i) => {
+          return <Message key={i} user={message.user} text={message.text} />
+        })}
+      </div>
+    )
+  },
+})
+```
+
+#### MessageForm And ChangeNameForm:
+
+These two our quite similar. We have a submit handler that take the message and give it to the callback of it's parent component(ChatApp) for future rendering and emitting to server. Also it keep track of the message when you type and assign it to a property (like text) in state using setState. And in we can use this data in it's class state.
+
+```js
+var MessageForm = React.createClass({
+  getInitialState() {
+    return { text: '' }
+  },
+
+  handleSubmit(e) {
+    e.preventDefault()
+    var message = {
+      user: this.props.user,
+      text: this.state.text,
+    }
+    this.props.onMessageSubmit(message)
+    this.setState({ text: '' })
+  },
+
+  changeHandler(e) {
+    this.setState({ text: e.target.value })
+  },
+
+  render() {
+    return (
+      <div className="message_form">
+        <h3>Write New Message</h3>
+        <form onSubmit={this.handleSubmit}>
+          <input onChange={this.changeHandler} value={this.state.text} />
+        </form>
+      </div>
+    )
+  },
+})
+
+var ChangeNameForm = React.createClass({
+  getInitialState() {
+    return { newName: '' }
+  },
+
+  onKey(e) {
+    this.setState({ newName: e.target.value })
+  },
+
+  handleSubmit(e) {
+    e.preventDefault()
+    var newName = this.state.newName
+    this.props.onChangeName(newName)
+    this.setState({ newName: '' })
+  },
+
+  render() {
+    return (
+      <div className="change_name_form">
+        <h3> Change Name </h3>
+        <form onSubmit={this.handleSubmit}>
+          <input onChange={this.onKey} value={this.state.newName} />
+        </form>
+      </div>
+    )
+  },
+})
+```
+
+#### ChatApp
+
+Last component is ChatApp, in which we put all these small components together to run our app.
+
+React's classes has a getInitialState function which expect us to return the initial data of class. `componentDidMount` gets called after the component mounted, therefore it's the best place to attach our socket.io listeners.
+
+```js
+var ChatApp = React.createClass({
+  getInitialState() {
+    return { users: [], messages: [], text: '' }
+  },
+
+  componentDidMount() {
+    socket.on('init', this._initialize)
+    socket.on('send:message', this._messageRecieve)
+    socket.on('user:join', this._userJoined)
+    socket.on('user:left', this._userLeft)
+    socket.on('change:name', this._userChangedName)
+  },
+
+  _initialize(data) {
+    var { users, name } = data
+    this.setState({ users, user: name })
+  },
+
+  _messageRecieve(message) {
+    var { messages } = this.state
+    messages.push(message)
+    this.setState({ messages })
+  },
+
+  _userJoined(data) {
+    var { users, messages } = this.state
+    var { name } = data
+    users.push(name)
+    messages.push({
+      user: 'APPLICATION BOT',
+      text: name + ' Joined',
+    })
+    this.setState({ users, messages })
+  },
+
+  _userLeft(data) {
+    var { users, messages } = this.state
+    var { name } = data
+    var index = users.indexOf(name)
+    users.splice(index, 1)
+    messages.push({
+      user: 'APPLICATION BOT',
+      text: name + ' Left',
+    })
+    this.setState({ users, messages })
+  },
+
+  _userChangedName(data) {
+    var { oldName, newName } = data
+    var { users, messages } = this.state
+    var index = users.indexOf(oldName)
+    users.splice(index, 1, newName)
+    messages.push({
+      user: 'APPLICATION BOT',
+      text: 'Change Name : ' + oldName + ' ==> ' + newName,
+    })
+    this.setState({ users, messages })
+  },
+
+  handleMessageSubmit(message) {
+    var { messages } = this.state
+    messages.push(message)
+    this.setState({ messages })
+    socket.emit('send:message', message)
+  },
+
+  handleChangeName(newName) {
+    var oldName = this.state.user
+    socket.emit('change:name', { name: newName }, (result) => {
+      if (!result) {
+        return alert('There was an error changing your name')
+      }
+      var { users } = this.state
+      var index = users.indexOf(oldName)
+      users.splice(index, 1, newName)
+      this.setState({ users, user: newName })
+    })
+  },
+
+  render() {
+    return (
+      <div>
+        <UsersList users={this.state.users} />
+        <MessageList messages={this.state.messages} />
+        <MessageForm onMessageSubmit={this.handleMessageSubmit} user={this.state.user} />
+        <ChangeNameForm onChangeName={this.handleChangeName} />
+      </div>
+    )
+  },
+})
+```
+
+Take a look at render function. We used our components and we assign their properties like and html attributes which is equals to a react expression. Inside the expressions we used the main data that come from backend, like users and messages, and are in ChatApp's state.
+
+Last but not least, using `React.render`, we render the ChatApp and in the app div.
+
+```js
+React.render(<ChatApp />, document.getElementById('app'))
+```
+
+You can see the source code [here](https://github.com/DanialK/ReactJS-Realtime-Chat).
+
+Hope it helped you get up and running with React!!
+
+---
+
+\*\*\*Update(9/8/2013): Update to React v0.4.1
+
+#### \*\*\*Update(13/7/2015):
+
+Ok after 2 years, a lot of things has changed, but React (`<3`) is still an awesome library !!
+
+Here's list of changes:
+
+    * Update to React v0.13 + Required changes in the code
+    * Using Browserify + Babelify to compile our JSX files
+    * Using ES6 way of defining methods inside the classes and arrow functions + some other ES6 goodies
+    * Server updated to Express v4.13

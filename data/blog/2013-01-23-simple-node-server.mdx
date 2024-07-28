@@ -1,0 +1,161 @@
+---
+layout: PostLayout
+title: 'Simple Node Server'
+date: 2013-01-23 19:55
+tags:
+  - Node
+---
+
+Hello
+
+In my first post on my brand new blog I want to talk about my new discoveries on [NodeJS](http://nodejs.org/ 'NodeJs'). As you can see in NodeJs site :
+
+> Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
+
+Its a lot great features that all are 100% JavaScript . Definitely it's a great choice for a beginner like me that only know a bit of JavaScrip. With Node you can run your server side JavaScript codes easily !!
+
+---
+
+# What We Are Going To See?
+
+I'm going to show you how to make a simple server. For now I just render two pages on this server, home and about. It's all with pure NodeJS and I don't use any framework. If you are familiar with amazing framework of NodeJS, Express you would say it could be much more easier with Express. I agree but I believe first we should learn how to deal with NodeJS and after that go for frameworks.
+
+By the way i'm going to cover Express in future posts in this blog !!
+
+---
+
+{/* <!-- more --> */}
+
+# Lets Start
+
+### Our App Directory
+
+- config.json
+- main.js
+- router.js
+- requestHandlers.js
+- server.js
+- views
+  - home.html
+  - about.html
+  - 404.html
+
+---
+
+The config.json file contain some information which in this case is the host and the port that we want to run our server on them.
+
+```js Example
+{
+	"port" : 7777,
+	"host" : "127.0.0.1"
+}
+```
+
+### server.js
+
+```js Example
+var http = require('http')
+var url = require('url')
+var fs = require('fs')
+
+var config = JSON.parse(fs.readFileSync('config.json')),
+  host = config.host,
+  port = config.port
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname
+    console.log('Request for ' + pathname + ' received.')
+    route(handle, pathname, response, request)
+  }
+
+  http.createServer(onRequest).listen(port, host)
+  console.log('Server has started and listening on : ' + host + ':' + port)
+}
+
+exports.start = start
+```
+
+First we require modules that we need for our server, in this case "http","url" and "fs". Then whit JSON.parse() method we want to make our json file like an object for our server to use it's properties. Inside this method we pass readFileSynce() method which can read our config.json file and make it ready for our JSON.parse() method. Then we assign the value of host and port.
+
+Then it going to call the route function and pass some arguments to it which i explain more in future.
+At the end we export the start function to require it in our main.js and use it !
+
+### router.js
+
+The route function inside router.js file is like this :
+
+```js Example
+function route(handle, pathname, response, request) {
+  console.log('About to route a request for ' + pathname)
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname](response, request)
+  } else {
+    console.log('No request handler found for ' + pathname)
+    var content = fs.readFileSync('./views/404.html')
+    response.writeHead(404, { 'Content-Type': 'text/html' })
+    response.write(content)
+    response.end()
+  }
+}
+
+exports.route = route
+```
+
+As you may noticed our route function log the path that we pass it start function, when we run our application and try to go the any of our pages in our view directory in our console it log the path.
+
+The workflow in this application is tha we assign paths in min.'s and this paths call the functions from requestHandlers.js and the function render the page for us to see in browser. When we call a route from our browser the route function check if the path is equal to the paths that we assign in min.'s and they would be functions, then it run that function with that path. These are assign to some function in our requestHandlers.js. If the path doesn't match with the routes that we had specified in min.'s, it going to read the content of 404 view and send it to our browser .
+
+### main.js
+
+```js Example
+var server = require('./server')
+var router = require('./router')
+var requestHandlers = require('./requestHandlers')
+
+var handle = {}
+handle['/'] = requestHandlers.home
+handle['/about'] = requestHandlers.about
+
+server.start(router.route, handle)
+```
+
+For example when the path is "/about" the route function will run the handle["/about"]. This assgined to about function in requestHandlers.js
+
+So lets look at our functions in our handler
+
+### requestHandler.js
+
+```js Example
+var fs = require('fs')
+
+function home(response) {
+  console.log("Request handler 'home' was called.")
+
+  var content = fs.readFileSync('./views/home.html')
+  response.writeHead(200, { 'Content-Type': 'text/html' })
+  response.write(content)
+  response.end()
+}
+
+function about(response) {
+  console.log("Request handler 'about' was called.")
+  var content = fs.readFileSync('./views/about.html')
+  response.writeHead(200, { 'Content-Type': 'text/html' })
+  response.write(content)
+  response.end()
+}
+
+exports.home = home
+exports.about = about
+```
+
+When each of the functions in our handler calls, it read the html and assign it to content variable. Then with response.write(), we send the content to browser.
+
+That's it. Now if you want to add more static views , you just need write their render functions in requestHandler and export them for your main.js and easily assign the new path. Don't forget to put new htmls in view folder !
+
+---
+
+As I said, i'm completely beginner and this blog is a place to review my new discoveries and also share them with others. I've watched some screencast form [Tutsplus](https://tutsplus.com/ Tut+) and i've read [Node Beginner Book](http://www.nodebeginner.org/) and I tried to put their basics together to write this post.
+
+Here is the [github](https://github.com/DanialK/SimpleNodeServer) repository of this little project .
