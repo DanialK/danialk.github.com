@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Functional Programming in C#"
+date: 2019-10-29 14:16
+comments: true
+categories: 
+- Functional Programming
+- FP
+- C#
+---
+
+
+I got introduced to Functional Programming over 3 years ago and little by little, I ended up accumulating new ideas and ways of thinking that made me feel more confident at problem solving stage of coding. Functional Programming enabled me to have multiple options for solving a problem at hand.
+
+Functional programming gave me a set of tools and a common way of thinking for solving literally any problem, async or sync, which allowed me to simplify every problem into smaller chunks and build my program by composing those chunks. 
+
+And every new language I learnt, functional or not, I kept applying these techniques or ways of thinking. Every new concept, higher order function, functional data structure or effect that I learnt, say in Haskell or Scala or even C#/TypeScript, was immediately ready for problem solving in other languages I knew, just had to find the right syntax or library that had those functional data structures to be able to work.
+
+At my current job, the .NET stack is used for backend application development, React/TypeScript is used for Frontend and Scala/Spark for Big Data. As engineers, we are a practical bunch and a good few people have showed interest in learning more about Functional Programming. 
+
+After certain failed attempts/lack of support for trying to bring FP to our application development stack through the use of F# or trying to teach FP concepts using Haskell, I decided to delve deeper into doing FP in C# and create practical examples that can be beneficial to everyone in their current application without needing to "rewrite" the whole thing in a language they are comfortable with.
+
+[**Functional Programming in C#**](https://github.com/DanialK/fp-in-csharp), is the result of the talks I gave at my company and have managed to receive some good feedback from my peers, I hope these examples can be useful to others too.
+
+
+##### You can find all the code and slides on here on github [**https://github.com/DanialK/fp-in-csharp**](https://github.com/DanialK/fp-in-csharp)
+
+
+
+### Resources
+- [language-ext](https://github.com/louthy/language-ext) - C# functional language extensions - a base class library for functional programming
+- [Functional Programming in C#](https://www.manning.com/books/functional-programming-in-c-sharp) book by Enrico Buonanno

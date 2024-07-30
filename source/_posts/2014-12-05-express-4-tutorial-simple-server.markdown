@@ -1,0 +1,144 @@
+---
+layout: post
+title: "Express 4 Tutorial - Simple Server"
+date: 2014-12-05 14:03
+comments: true
+categories: 
+- Express
+- NodeJS
+
+---
+
+[Express 4](http://expressjs.com/) was released a while ago and although the API is pretty much the same as version 3, there are some breaking changes which I recommend you to take a look at this [page](http://expressjs.com/guide/migrating-4.html) in case you want to move your express 3 application to express 4.
+
+Version 4 changed to Express core and middleware system. Which means the dependency on Connect framework which was built-in Express is removed and you must separately download and add the middleware you want to your application. Also the routing system has changed and the new router has much more flexibility.
+
+I'm planing to write a tutorial series on Express 4. In this tutorial we're writing a very basic Express 4 app and connect it to a (dummy)Database and authenticate users.
+
+###[Source Code](https://github.com/DanialK/express4-tutorial-simple-server)
+
+<!-- more -->
+
+
+### Applicaiton Structure 
+
+	App
+
+	- public -> We put static files here
+	
+	- views -> Our Jade template views are here
+	
+	- routes -> Different routers of the application stay here
+	
+	
+	 
+
+### App.js
+If you are familiar with Express 3, this is code also looks familiar to you. The difference is that now we have to load ```cookie-parser```, ```body-parser``` and ```express-session``` and load them into our applicaiton as a middleware by ```app.use()```.
+
+	
+``` js App.js https://github.com/DanialK/express4-tutorial-simple-server/blob/
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session')
+
+// loading routes
+var index = require('./routes/index');
+var login = require('./routes/login');
+var signup = require('./routes/signup');
+var user = require('./routes/user');
+
+var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+    secret : "SHUUUUSH",
+    saveUninitialized: true,
+    resave : false 
+}))
+
+// attaching routes to the application
+app.use(index);
+app.use(login);
+app.use(signup);
+app.use(user);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
+
+
+module.exports = app;
+
+
+```
+
+
+##Routers
+
+Each route file in routes folder exports a router which takes routes for a specific part of the application and like middlewares we load them into the applicaiton by ```app.use()```
+
+``` js index.js https://github.com/DanialK/express4-tutorial-simple-server/blob/master/routes/index.js
+
+var express = require('express');
+var router = express.Router();
+
+
+router.get('/', function(req, res) {
+	var user = req.session.user; 
+	res.render('index', { title: 'Express 4 Tutorial', user : user? user: null });
+});
+
+module.exports = router;
+
+
+```	
+
+
+
+##Source code	
+This simple app, sign you up as a user and saves in session. You can access your profile and other users profile by going to ```localhost:3000/user/:id``` which you have to put a valid user id, otherwise you receive 404. This simple app also restricts you to access users' profile if you're not logged in and restricts your access to pages such as login and sign up after you are signed in.
+
+You can find the code [HERE](https://github.com/DanialK/express4-tutorial-simple-server)
+
+To run the application install the dependencies ``` npm install ``` and then ```npm start```
+
+
+
+

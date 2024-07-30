@@ -1,0 +1,36 @@
+#livesentimentIframeHolder {
+    display: flex;
+    height: 600px;
+    background: #673AB7;
+    justify-content: center;
+    align-items: center;
+}
+
+#livesentimentIframe {
+    flex-grow: 1;
+    height: 600px;
+}
+
+#liveSentimentStart {
+    height: 200px;
+    width: 200px;
+    border-radius: 100%;
+    border: none;
+    font-size: 42px;
+    color: #FFFFFF;
+    background-color: #009688;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    outline: none;
+    box-shadow: 0 8px 35px -3px black;
+}
+
+#liveSentimentStart:hover {
+    font-size: 48px;
+    height: 250px;
+    width: 250px;
+    overflow: hidden;
+    outline: none;
+    box-shadow: 0 8px 20px 0px black
+}

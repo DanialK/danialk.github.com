@@ -1,0 +1,54 @@
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+    window.onload = function () {
+        var containerId = "subtitle";
+        var subtitle = document.getElementById(containerId);
+        var texts = [
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Statistics",
+            "Web Development",
+            "Functional Programming",
+            subtitle.innerHTML, // "Entrepreneur in the making...",
+        ];
+
+        function simulateType(textIndex) {
+            subtitle.innerHTML = "";
+            var text = texts[textIndex];
+
+            var time = 200;
+            for (var i = 0; i < text.length; i++) {
+                (function (char) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML + char;
+                    }, time + i * time);
+                })(text[i]);
+            }
+
+            setTimeout(function () {
+                var nextIndex = textIndex + 1;
+                simulateBackslash(nextIndex === texts.length ? 0 : nextIndex);
+            }, time * text.length + 1500);
+        }
+
+        function simulateBackslash(textIndex) {
+            var text = subtitle.innerHTML
+            var time = 50;
+
+            for (var i = text.length - 1; i >= 0; i--) {
+                (function (index) {
+                    setTimeout(function () {
+                        subtitle.innerHTML = subtitle.innerHTML.substring(0, index);
+                    }, time + (text.length - i) * time);
+                })(i);
+            }
+
+            setTimeout(function () {
+                simulateType(textIndex);
+            }, 2000);
+        }
+        simulateBackslash(0);
+    }
+</script>

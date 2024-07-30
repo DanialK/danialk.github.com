@@ -1,0 +1,26 @@
+---
+layout: post
+title: "R: Fancy plots using ggplot2 and ggthemes"
+date: 2015-12-17 15:43
+comments: true
+categories:
+- R
+- ggplot2
+- plotting
+- graphing
+ 
+---
+
+In this post I want to introduce you to a great ggplot2 add-on, ggthemes.
+ggthemes which is freely available on [github](https://github.com/jrnold/ggthemes), let you turn your current plots to professional looking plots in a matter of a couple of lines of code.
+
+ggthemes has various of different themes such as ```The Economist```, ```Excel``` and various other professional themes that makes your current plots much fancier.
+
+
+Here is a plot that I made for one of my assignments this year using this library.
+{% img /images/ggthemes_tutorial.png %}
+
+
+Check out more examples on its offical [Github Repo](https://github.com/jrnold/ggthemes)
+
+
