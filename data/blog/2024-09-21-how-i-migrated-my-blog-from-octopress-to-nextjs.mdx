@@ -1,0 +1,174 @@
+---
+layout: PostLayout
+title: 'How I migrated my blog from Octopress to NextJS'
+date: 2024-09-21 20:08
+tags:
+  - NextJS
+---
+
+My blog has been gathering dust for the past 5 years as I've been spending more time on non-tech hobbies and have been busy with work, life and family.
+
+Recently, I opened up my 11-year-old Octopress-based blog and, oh boy, it looked very outdated!!
+
+![](/static/images/blog_migration_octopress.png)
+
+So I thought it would be cool to migrate it to NextJS and take advantage of the static rendering capabilities of the framework.
+
+{/* <!-- more --> */}
+
+After a couple of hours, I got something working that was loading my old markdown files, respecting the same URL structure and rendering them in the page without any special styles.
+
+Now that the core of it was working, I had to decide how I wanted it to look and style it, but that quickly became a lot less fun, and I was already more than halfway into the time budget I had set aside for this project over the weekend.
+
+So, I decided to look up some blog templates online for inspiration and came across https://github.com/timlrx/tailwind-nextjs-starter-blog, which was pretty much what I wanted, already using NextJS, Tailwind, and lots of other goodies!
+
+I then decided to scrap all the code I had written and switch to this starter blog.
+
+But there were a few modifications I had to make before I could ship it!!
+
+# Change the URL structure to match the Octopress blog
+
+The posts in Octopress had the `/blog/[year]/[month]/[day]/[post-slug]` structure and I wanted to keep it the same in the new blog as I liked having the date in the URL and didn't want to break any potential bookmarks!
+
+
+In order to do that, in `contentlayer.config.ts` I added this utility
+
+``` ts
+const computeSlug = (flattenedPath: string) => {
+  const slug = flattenedPath.replace(/^.+?(\/)/, '')
+  const regex = /^(\d{4})-(\d{2})-(\d{2})-(.+)$/
+  const match = slug.match(regex)
+  if (match) {
+    const [, year, month, date, rest] = match
+    return [year, month, date, decodeURI(rest)].join('/')
+  } else {
+    return slug
+  }
+}
+
+```
+
+And changed the definition of `path` in `computedFields` as follows
+
+
+``` diff
+  path: {
+    type: 'string',
+-    resolve: (doc) => doc._raw.flattenedPath,
++    resolve: (doc) => `/blog/${computeSlug(doc._raw.flattenedPath)}`,
+  },
+```
+
+There are a few more changes you need to make across the app, so I suggest looking at the migration commit [here](https://github.com/DanialK/danialk.github.com/commit/bcb412e9ee031d8e13a3ff3a61bd06f7f24f38c8#diff-82564f14f478f0fb2cfdd630090a4d534c6dc2faf5f3de7e10524434d4cbed45R76-R87).
+
+
+# Migrate my interactive apps
+
+I have a few posts with an interactive app such as [Shipping Deep Learning Models in Web and Mobile Applications](/blog/2018/06/23/shipping-deep-learning-models-in-web-and-mobile-applications/) and [Sudoku Written Using ES6 React and Redux](/blog/2016/01/15/sudoku-written-using-es6-react-redux/).
+
+I had to migrate those to a React component, add them, render them in MDX, and adjust the styles, etc.
+
+
+# Rewrite the typing simulation in the header
+
+In the Octopress blog, I had a jQuery-based typing simulation that would loop through a few sentences, type them, remove them, and move on to the next one.
+
+I rewrote that using React and hooks and render it in the Header component.
+
+See the code [here](https://github.com/DanialK/danialk.github.com/blob/bcb412e9ee031d8e13a3ff3a61bd06f7f24f38c8/components/Header.tsx)
+
+# Add support for rendering post snippets
+
+Last but not least, Octopress had the really cool, post snippets feature that would show a portion of your blog's content on the homepage as a snippet.
+
+The way it worked was that you put a `/* <!-- more --> */` comment in your markdown file, and Octopress would automatically use the content before this comment as the snippet.
+
+This starter blog was missing this feature and this made the homepage look too simple.
+
+![](/static/images/blog_migration_nextjs_without_snippets.png)
+
+It had support for a `summary` field, but that meant I had to write a summary or copy paste a portion of my blog into the summary field manually. Besides, this summary field is `string` only which means you cannot have any interactive components in the snippet.
+
+So I implemented my own snippet feature, for which I had to jump into the [contentlayer2](https://www.npmjs.com/package/contentlayer2) code and figure out how it works a bit.
+
+At the start, it seemed like it should be an easy task as contentlayer has the concept of fields which can take `mdx` and `markdown` types and contentlayer would automatically parse those fields for you.
+
+But then it turns out that since I wanted the snippet to be the portion of the original post MDX file before the `{/* <!-- more --> */}`, I had to make this field up on the fly, meaning I had to create `snippet` as a `computedField`.
+
+I quickly discovered that contentlayer2, does not support `mdx` or `markdown` in computed fields, only simple types such as `string`, `date`, etc.
+
+So I had to jump into contentlayer2's code to see how it parses and converts the blog MDX content and figured out that this is done by `mdxBundler.bundleMDX`.
+
+I used that and borrowed some of the code I found [here](https://github.com/timlrx/contentlayer2/blob/892361671492f56302d6b63c166ce4f99c60d1dd/packages/%40contentlayer/core/src/markdown/mdx.ts#L12-L84) to create my `snippet` as a `string` computedField that returns the rendered/compiled MDX.
+
+``` ts
+const snippetSeperator = '{/* <!-- more --> */}'
+
+export const Blog = defineDocumentType(() => ({
+  ...
+  computedFields: {
+    ...
+    snippet: {
+      type: 'string',
+      resolve: async (doc) => {
+        if (!doc.body.raw.includes(snippetSeperator)) {
+          return null
+        }
+
+        const mdxString = doc.body.raw.split(snippetSeperator)[0]
+
+        const rawDocumentData = doc._raw
+        const {
+          rehypePlugins,
+          remarkPlugins,
+          mdxOptions: mapMdxOptions,
+          esbuildOptions: mapEsbuildOptions,
+          ...restOptions
+        } = defaultMdxOptions
+
+        const mdxOptions = {
+          mdxOptions: (opts) => {
+            opts.rehypePlugins = [...(opts.rehypePlugins ?? []), ...(rehypePlugins ?? [])]
+            opts.remarkPlugins = [
+              addRawDocumentToVFile(rawDocumentData),
+              ...(opts.remarkPlugins ?? []),
+              ...(remarkPlugins ?? []),
+            ]
+            return mapMdxOptions ? mapMdxOptions(opts) : opts
+          },
+          esbuildOptions: (opts, frontmatter) => {
+            // NOTE this is needed to avoid `esbuild` from logging a warning regarding the `tsconfig.json` target option not being used
+            opts.target = 'es2020'
+            return mapEsbuildOptions ? mapEsbuildOptions(opts, frontmatter) : opts
+          },
+          // NOTE `restOptions` should be spread at the end to allow for user overrides
+          ...restOptions,
+        }
+
+        return mdxBundler.bundleMDX({ source: mdxString, ...mdxOptions }).then((res) => res.code)
+      },
+    },
+  },
+}))
+```  
+
+And rendered the snippets in `Main.tsx` as follows
+
+``` ts
+  {snippet ? (
+    <MDXLayoutRenderer code={snippet} components={components} toc={0} />
+  ) : (
+    summary
+  )}
+```                          
+
+
+See [contentlayer.config.ts](https://github.com/DanialK/danialk.github.com/blob/bcb412e9ee031d8e13a3ff3a61bd06f7f24f38c8/contentlayer.config.ts#L179-L220) and [Main.tsx](https://github.com/DanialK/danialk.github.com/blob/bcb412e9ee031d8e13a3ff3a61bd06f7f24f38c8/app/Main.tsx#L49-L54) for more details.
+
+
+And here's the final product, with snippets!!
+
+![](/static/images/blog_migration_nextjs.png)
+
+
+Oh btw I ended up going way above the time budget I had set but I had loads of fun so it was worth it!!
